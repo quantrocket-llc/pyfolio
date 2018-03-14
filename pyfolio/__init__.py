@@ -13,6 +13,7 @@ from . import perf_attrib
 from .tears import *  # noqa
 from .plotting import *  # noqa
 from ._version import get_versions
+from .moonshot import * # noqa
 
 try:
     from . import bayesian
