@@ -1,0 +1,199 @@
+# Copyright 2018 QuantRocket LLC - All Rights Reserved
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# To run: python3 -m unittest discover -s tests/ -p test_moonshot.py -t . -v
+
+import matplotlib as mpl
+mpl.use("Agg")
+import unittest
+from unittest.mock import patch
+import io
+import pandas as pd
+import pyfolio
+import numpy as np
+
+MOONSHOT_RESULTS = {
+    'Field': [
+        'Benchmark',
+        'Benchmark',
+        'Benchmark',
+        'NetExposure',
+        'NetExposure',
+        'NetExposure',
+        'Return',
+        'Return',
+        'Return'],
+    'Date': [
+        '2018-05-07',
+        '2018-05-08',
+        '2018-05-09',
+        '2018-05-07',
+        '2018-05-08',
+        '2018-05-09',
+        '2018-05-07',
+        '2018-05-08',
+        '2018-05-09'],
+    'AAPL(265598)': [
+        185.16,
+        186.05,
+        187.24,
+        0.25,
+        0.2,
+        0.5,
+        0.0018087363324810761,
+        0.0012016634262259631,
+        0.0015990325181403089],
+    'AMZN(3691937)': [
+        np.nan,
+        np.nan,
+        np.nan,
+        0.25,
+        0.3,
+        0.5,
+        0.0030345678231443185,
+        -0.0012108315522391664,
+        0.0022937220153353977]
+}
+
+class PyFolioFromMoonshotTestCase(unittest.TestCase):
+
+    @patch("pyfolio.moonshot.create_full_tear_sheet")
+    def test_from_moonshot_csv(self, mock_create_full_tear_sheet):
+
+        f = io.StringIO()
+        moonshot_results = pd.DataFrame(MOONSHOT_RESULTS)
+        moonshot_results.to_csv(f,index=False)
+        f.seek(0)
+
+        pyfolio.from_moonshot_csv(f)
+
+        tear_sheet_call = mock_create_full_tear_sheet.mock_calls[0]
+
+        _, args, kwargs = tear_sheet_call
+        self.assertEqual(len(args), 1)
+        returns = args[0]
+        self.assertEqual(returns.index.tz.zone, "UTC")
+        self.assertDictEqual(
+            returns.to_dict(),
+            {
+                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004843304155625394,
+                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013203064e-06,
+                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334757063
+            })
+        self.assertEqual(list(kwargs.keys()), ["positions", "benchmark_rets"])
+        benchmark_rets = kwargs["benchmark_rets"]
+        positions = kwargs["positions"]
+        self.assertListEqual(
+            positions.reset_index().to_dict(orient="records"),
+            [
+                {'Date': pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'),
+                 'AAPL(265598)': 0.25,
+                 'AMZN(3691937)': 0.25,
+                 'cash': 0.5
+                 },
+                {'Date': pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'),
+                 'AAPL(265598)': 0.2,
+                 'AMZN(3691937)': 0.3,
+                 'cash': 0.5
+                 },
+                {'Date': pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'),
+                 'AAPL(265598)': 0.5,
+                 'AMZN(3691937)': 0.5,
+                 'cash': 0
+                 }
+            ]
+        )
+        self.assertDictEqual(
+            # replace nan with "nan" to allow equality comparisons
+            benchmark_rets.where(benchmark_rets.notnull(), "nan").to_dict(),
+            {
+                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): "nan",
+                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): 0.004806653704903852,
+                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.006396130072561235
+            }
+        )
+
+    @patch("pyfolio.moonshot.create_full_tear_sheet")
+    def test_from_moonshot_csv_no_benchmark(self, mock_create_full_tear_sheet):
+
+        f = io.StringIO()
+        moonshot_results = pd.DataFrame(MOONSHOT_RESULTS)
+        moonshot_results = moonshot_results[moonshot_results.Field != "Benchmark"]
+        moonshot_results.to_csv(f,index=False)
+        f.seek(0)
+
+        pyfolio.from_moonshot_csv(f)
+
+        tear_sheet_call = mock_create_full_tear_sheet.mock_calls[0]
+
+        _, args, kwargs = tear_sheet_call
+        self.assertEqual(len(args), 1)
+        returns = args[0]
+        self.assertEqual(returns.index.tz.zone, "UTC")
+        self.assertDictEqual(
+            returns.to_dict(),
+            {
+                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004843304155625394,
+                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013203064e-06,
+                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334757063
+            })
+        self.assertEqual(list(kwargs.keys()), ["positions"])
+        positions = kwargs["positions"]
+        self.assertListEqual(
+            positions.reset_index().to_dict(orient="records"),
+            [
+                {'Date': pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'),
+                 'AAPL(265598)': 0.25,
+                 'AMZN(3691937)': 0.25,
+                 'cash': 0.5
+                 },
+                {'Date': pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'),
+                 'AAPL(265598)': 0.2,
+                 'AMZN(3691937)': 0.3,
+                 'cash': 0.5
+                 },
+                {'Date': pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'),
+                 'AAPL(265598)': 0.5,
+                 'AMZN(3691937)': 0.5,
+                 'cash': 0
+                 }
+            ]
+        )
+
+    @patch("pyfolio.moonshot.create_full_tear_sheet")
+    def test_from_moonshot_csv_pass_kwargs(self, mock_create_full_tear_sheet):
+
+        f = io.StringIO()
+        moonshot_results = pd.DataFrame(MOONSHOT_RESULTS)
+        moonshot_results.to_csv(f,index=False)
+        f.seek(0)
+
+        pyfolio.from_moonshot_csv(f, foo="bar", baz="bat")
+
+        tear_sheet_call = mock_create_full_tear_sheet.mock_calls[0]
+
+        _, args, kwargs = tear_sheet_call
+        self.assertEqual(len(args), 1)
+        returns = args[0]
+        self.assertEqual(returns.index.tz.zone, "UTC")
+        self.assertDictEqual(
+            returns.to_dict(),
+            {
+                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004843304155625394,
+                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013203064e-06,
+                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334757063
+            })
+        self.assertSetEqual(set(kwargs.keys()), {"positions", "benchmark_rets", "foo", "baz"})
+        self.assertEqual(kwargs["foo"], "bar")
+        self.assertEqual(kwargs["baz"], "bat")

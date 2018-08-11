@@ -52,11 +52,8 @@ def from_moonshot(results, **kwargs):
     """
     # pandas DatetimeIndexes are serialized with UTC offsets, and pandas
     # parses them back to UTC but doesn't set the tz; pyfolio needs tz-aware
-    dates = results.index.get_level_values("Date")
-    if not dates.tz:
-        dates.tz = "UTC"
-        results.index = pd.MultiIndex.from_arrays(
-            (results.index.get_level_values("Field"), dates))
+    if not results.index.get_level_values("Date").tz:
+        results = results.tz_localize("UTC", level="Date")
 
     returns = results.loc["Return"].sum(axis=1)
     positions = results.loc["NetExposure"]
