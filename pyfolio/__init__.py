@@ -14,6 +14,7 @@ from .tears import *  # noqa
 from .plotting import *  # noqa
 from ._version import get_versions
 from .moonshot import * # noqa
+from .zipline import from_zipline_csv
 
 try:
     from . import bayesian
