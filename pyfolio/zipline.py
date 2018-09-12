@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import pandas as pd
-import numpy as np
 from .tears import create_full_tear_sheet
 from quantrocket.zipline import ZiplineBacktestResult
 
