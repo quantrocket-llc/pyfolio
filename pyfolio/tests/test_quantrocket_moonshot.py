@@ -68,7 +68,7 @@ MOONSHOT_RESULTS = {
 
 class PyFolioFromMoonshotTestCase(unittest.TestCase):
 
-    @patch("pyfolio.moonshot.create_full_tear_sheet")
+    @patch("pyfolio.quantrocket_moonshot.create_full_tear_sheet")
     def test_from_moonshot_csv(self, mock_create_full_tear_sheet):
 
         f = io.StringIO()
@@ -124,7 +124,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
             }
         )
 
-    @patch("pyfolio.moonshot.create_full_tear_sheet")
+    @patch("pyfolio.quantrocket_moonshot.create_full_tear_sheet")
     def test_from_moonshot_csv_no_benchmark(self, mock_create_full_tear_sheet):
 
         f = io.StringIO()
@@ -171,7 +171,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
             ]
         )
 
-    @patch("pyfolio.moonshot.create_full_tear_sheet")
+    @patch("pyfolio.quantrocket_moonshot.create_full_tear_sheet")
     def test_from_moonshot_csv_pass_kwargs(self, mock_create_full_tear_sheet):
 
         f = io.StringIO()

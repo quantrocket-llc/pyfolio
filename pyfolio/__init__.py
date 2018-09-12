@@ -13,8 +13,8 @@ from . import perf_attrib
 from .tears import *  # noqa
 from .plotting import *  # noqa
 from ._version import get_versions
-from .moonshot import * # noqa
-from .zipline import from_zipline_csv
+from .quantrocket_moonshot import * # noqa
+from .quantrocket_zipline import from_zipline_csv # noqa
 
 try:
     from . import bayesian
