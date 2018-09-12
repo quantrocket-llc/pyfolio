@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# To run: python3 -m unittest discover -s tests/ -p test_zipline.py -t . -v
+# To run: python3 -m unittest discover -s tests/ -p test_quantrocket*.py -t . -v
 
 import matplotlib as mpl
 mpl.use("Agg")
