@@ -66,6 +66,54 @@ MOONSHOT_RESULTS = {
         0.0022937220153353977]
 }
 
+MOONSHOT_INTRADAY_RESULTS = {
+    'Field': [
+        'NetExposure',
+        'NetExposure',
+        'NetExposure',
+        'NetExposure',
+        'Return',
+        'Return',
+        'Return',
+        'Return'],
+    'Date': [
+        '2018-05-07',
+        '2018-05-07',
+        '2018-05-08',
+        '2018-05-08',
+        '2018-05-07',
+        '2018-05-07',
+        '2018-05-08',
+        '2018-05-08'],
+    'Time': [
+        '10:00:00',
+        '11:00:00',
+        '10:00:00',
+        '11:00:00',
+        '10:00:00',
+        '11:00:00',
+        '10:00:00',
+        '11:00:00'],
+    'AAPL(265598)': [
+        0.25,
+        0.2,
+        0.5,
+        0.4,
+        0.0018087363324810761,
+        0.0012016634262259631,
+        0.0015990325181403089,
+        -0.0015790325181403089],
+    'AMZN(3691937)': [
+        0.25,
+        0.3,
+        0.5,
+        -0.25,
+        0.0030345678231443185,
+        -0.0012108315522391664,
+        0.0022937220153353977,
+        0.0062937220153353977]
+}
+
 class PyFolioFromMoonshotTestCase(unittest.TestCase):
 
     @patch("pyfolio.quantrocket_moonshot.create_full_tear_sheet")
@@ -197,3 +245,40 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         self.assertSetEqual(set(kwargs.keys()), {"positions", "benchmark_rets", "foo", "baz"})
         self.assertEqual(kwargs["foo"], "bar")
         self.assertEqual(kwargs["baz"], "bat")
+
+    @patch("pyfolio.quantrocket_moonshot.create_full_tear_sheet")
+    def test_from_intraday_moonshot_csv(self, mock_create_full_tear_sheet):
+
+        f = io.StringIO()
+        moonshot_results = pd.DataFrame(MOONSHOT_INTRADAY_RESULTS)
+        moonshot_results.to_csv(f,index=False)
+        f.seek(0)
+
+        pyfolio.from_moonshot_csv(f)
+
+        tear_sheet_call = mock_create_full_tear_sheet.mock_calls[0]
+
+        _, args, kwargs = tear_sheet_call
+        self.assertEqual(len(args), 1)
+        returns = args[0]
+        self.assertEqual(returns.index.tz.zone, "UTC")
+        self.assertDictEqual(
+            returns.to_dict(),
+            {
+                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004834136029612191,
+                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): 0.008607444030670795})
+        self.assertEqual(list(kwargs.keys()), ["positions"])
+        positions = kwargs["positions"]
+        self.assertListEqual(
+            positions.reset_index().to_dict(orient="records"),
+            [
+                {'Date': pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'),
+                 'AAPL(265598)': 0.225,
+                 'AMZN(3691937)': 0.275,
+                 'cash': 0.5},
+                {'Date': pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'),
+                 'AAPL(265598)': 0.45,
+                 'AMZN(3691937)': 0.125,
+                 'cash': 0.42500000000000004}
+            ]
+        )

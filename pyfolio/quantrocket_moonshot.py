@@ -14,6 +14,7 @@
 
 import pandas as pd
 import numpy as np
+from quantrocket.moonshot import read_moonshot_csv, intraday_to_daily
 from .tears import create_full_tear_sheet
 
 def _get_benchmark_returns(benchmark_prices):
@@ -50,6 +51,9 @@ def from_moonshot(results, **kwargs):
     -------
     None
     """
+    if "Time" in results.index.names:
+        results = intraday_to_daily(results)
+
     # pandas DatetimeIndexes are serialized with UTC offsets, and pandas
     # parses them back to UTC but doesn't set the tz; pyfolio needs tz-aware
     if not results.index.get_level_values("Date").tz:
@@ -85,7 +89,5 @@ def from_moonshot_csv(filepath_or_buffer, **kwargs):
     -------
     None
     """
-    results = pd.read_csv(filepath_or_buffer,
-                          parse_dates=["Date"],
-                          index_col=["Field", "Date"])
+    results = read_moonshot_csv(filepath_or_buffer)
     return from_moonshot(results, **kwargs)
