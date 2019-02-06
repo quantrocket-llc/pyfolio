@@ -16,6 +16,7 @@ import pandas as pd
 import numpy as np
 from quantrocket.moonshot import read_moonshot_csv, intraday_to_daily
 from .tears import create_full_tear_sheet
+from .quantrocket_utils import pad_initial
 
 def _get_benchmark_returns(benchmark_prices):
     """
@@ -63,10 +64,16 @@ def from_moonshot(results, **kwargs):
     positions = results.loc["NetExposure"]
     positions["cash"] = 1 - positions.sum(axis=1)
 
+    returns.name = "returns"
+    returns = pad_initial(returns)
+
     fields = results.index.get_level_values("Field").unique()
     if "Benchmark" in fields:
-        kwargs["benchmark_rets"] = _get_benchmark_returns(
+        benchmark_rets = _get_benchmark_returns(
             results.loc["Benchmark"].astype(np.float64))
+        benchmark_rets.name = "benchmark_returns"
+        benchmark_rets = pad_initial(benchmark_rets)
+        kwargs["benchmark_rets"] = benchmark_rets
 
     return create_full_tear_sheet(
         returns,

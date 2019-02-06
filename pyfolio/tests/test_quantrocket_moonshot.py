@@ -132,8 +132,11 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         self.assertEqual(len(args), 1)
         returns = args[0]
         self.assertEqual(returns.index.tz.zone, "UTC")
+        # returns were padded to len 127 (more than 6 months=126 days)
+        self.assertEqual(returns.index.size, 127)
+        self.assertTrue((returns.iloc[:124] == 0).all())
         self.assertDictEqual(
-            returns.to_dict(),
+            returns.iloc[124:].to_dict(),
             {
                 pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004843304155625394,
                 pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013203064e-06,
@@ -162,11 +165,14 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
                  }
             ]
         )
+        # benchmark_rets were also padded to len 127
+        self.assertEqual(benchmark_rets.index.size, 127)
+        self.assertTrue((benchmark_rets.iloc[:124] == 0).all())
         self.assertDictEqual(
             # replace nan with "nan" to allow equality comparisons
-            benchmark_rets.where(benchmark_rets.notnull(), "nan").to_dict(),
+            benchmark_rets.iloc[124:].to_dict(),
             {
-                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): "nan",
+                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0,
                 pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): 0.004806653704903852,
                 pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.006396130072561235
             }
@@ -189,8 +195,11 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         self.assertEqual(len(args), 1)
         returns = args[0]
         self.assertEqual(returns.index.tz.zone, "UTC")
+        # returns were padded to len 127 (more than 6 months=126 days)
+        self.assertEqual(returns.index.size, 127)
+        self.assertTrue((returns.iloc[:124] == 0).all())
         self.assertDictEqual(
-            returns.to_dict(),
+            returns.iloc[124:].to_dict(),
             {
                 pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004843304155625394,
                 pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013203064e-06,
@@ -235,8 +244,11 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         self.assertEqual(len(args), 1)
         returns = args[0]
         self.assertEqual(returns.index.tz.zone, "UTC")
+        # returns were padded to len 127 (more than 6 months=126 days)
+        self.assertEqual(returns.index.size, 127)
+        self.assertTrue((returns.iloc[:124] == 0).all())
         self.assertDictEqual(
-            returns.to_dict(),
+            returns.iloc[124:].to_dict(),
             {
                 pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004843304155625394,
                 pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013203064e-06,
@@ -262,8 +274,11 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         self.assertEqual(len(args), 1)
         returns = args[0]
         self.assertEqual(returns.index.tz.zone, "UTC")
+        # returns were padded to len 127 (more than 6 months=126 days)
+        self.assertEqual(returns.index.size, 127)
+        self.assertTrue((returns.iloc[:125] == 0).all())
         self.assertDictEqual(
-            returns.to_dict(),
+            returns.iloc[125:].to_dict(),
             {
                 pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004834136029612191,
                 pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): 0.008607444030670795})

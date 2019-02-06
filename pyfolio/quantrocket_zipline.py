@@ -14,6 +14,7 @@
 
 import pandas as pd
 from .tears import create_full_tear_sheet
+from .quantrocket_utils import pad_initial
 from quantrocket.zipline import ZiplineBacktestResult
 
 def from_zipline_csv(filepath_or_buffer, **kwargs):
@@ -33,31 +34,17 @@ def from_zipline_csv(filepath_or_buffer, **kwargs):
     """
     results = ZiplineBacktestResult.from_csv(filepath_or_buffer)
 
-    # Due to 6-month rolling windows (126 days), we need at least 127 days of data
-    for attr in ("returns", "benchmark_returns"):
+    returns = results.returns
+    returns.name = "returns"
+    returns = pad_initial(returns)
 
-        df = getattr(results, attr)
-        if df.index.size < 127:
-            num_dates = (127 - df.index.size) + 1 # +1 b/c the union index will have 1 overlapping date
-            import warnings
-            msg = (
-                "Zipline {0} index has only {1} dates ({2} - {3}) but must "
-                "have at least 127 dates for pyfolio 6-month rolling windows "
-                "to chart properly, padding {0} with {4} initial zeros").format(
-                    attr,
-                    df.index.size,
-                    df.index.min().isoformat(),
-                    df.index.max().isoformat(),
-                    127 - df.index.size)
-            warnings.warn(msg)
-
-            pad_idx = pd.bdate_range(end=df.index.min(), periods=num_dates)
-            idx = pad_idx.union(df.index)
-            setattr(results, attr, df.reindex(index=idx).fillna(0))
+    benchmark_rets = results.benchmark_returns
+    benchmark_rets.name = "benchmark_returns"
+    benchmark_rets = pad_initial(benchmark_rets)
 
     return create_full_tear_sheet(
-        results.returns,
+        returns,
         positions=results.positions,
         transactions=results.transactions,
-        benchmark_rets=results.benchmark_returns,
+        benchmark_rets=benchmark_rets,
         **kwargs)
