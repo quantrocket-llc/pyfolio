@@ -39,8 +39,9 @@ def from_zipline_csv(filepath_or_buffer, **kwargs):
     returns = pad_initial(returns)
 
     benchmark_rets = results.benchmark_returns
-    benchmark_rets.name = "benchmark_returns"
-    benchmark_rets = pad_initial(benchmark_rets)
+    if benchmark_rets is not None:
+        benchmark_rets.name = "benchmark_returns"
+        benchmark_rets = pad_initial(benchmark_rets)
 
     return create_full_tear_sheet(
         returns,
