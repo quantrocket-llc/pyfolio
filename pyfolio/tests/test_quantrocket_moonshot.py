@@ -288,12 +288,12 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
             positions.reset_index().to_dict(orient="records"),
             [
                 {'Date': pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'),
-                 'AAPL(265598)': 0.225,
-                 'AMZN(3691937)': 0.275,
-                 'cash': 0.5},
+                 'AAPL(265598)': 0.25,
+                 'AMZN(3691937)': 0.3,
+                 'cash': 0.44999999999999996},
                 {'Date': pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'),
-                 'AAPL(265598)': 0.45,
-                 'AMZN(3691937)': 0.125,
-                 'cash': 0.42500000000000004}
+                 'AAPL(265598)': 0.5,
+                 'AMZN(3691937)': 0.5,
+                 'cash': 0.0}
             ]
         )

@@ -14,7 +14,8 @@
 
 import pandas as pd
 import numpy as np
-from quantrocket.moonshot import read_moonshot_csv, intraday_to_daily
+from quantrocket.moonshot import read_moonshot_csv
+from moonchart.utils import intraday_to_daily
 from .tears import create_full_tear_sheet
 from .quantrocket_utils import pad_initial
 
