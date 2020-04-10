@@ -2,10 +2,10 @@ language: python
 sudo: false
 
 python:
-  - 3.6
+  - 3.7
 
 env:
-  - PANDAS_VERSION=0.23.2
+  - PANDAS_VERSION=1.0.1
 
 before_install:
   # We do this conditionally because it saves us some downloading if the
@@ -23,11 +23,9 @@ before_install:
   - cp pyfolio/tests/matplotlibrc .
 
 install:
-  - conda create -q -n testenv --yes python=$TRAVIS_PYTHON_VERSION ipython pyzmq numpy scipy nose matplotlib pandas=$PANDAS_VERSION Cython patsy flake8 seaborn scikit-learn runipy pytables networkx pandas-datareader matplotlib-tests joblib mkl-service
+  - conda create -q -n testenv --yes python=$TRAVIS_PYTHON_VERSION ipython numpy scipy nose matplotlib pandas=$PANDAS_VERSION flake8 seaborn scikit-learn runipy pandas-datareader
   - source activate testenv
-  - pip install nose_parameterized
-  #- pip install --no-deps git+https://github.com/quantopian/zipline
-  - pip install -e .[bayesian] -c constraints.txt
+  - pip install -e .[all]
 
 script:
   - nosetests $TESTCMD

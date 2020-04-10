@@ -648,7 +648,7 @@ def show_perf_stats(returns, factor_returns=None, positions=None,
         for stat, value in perf_stats[column].iteritems():
             if stat in STAT_FUNCS_PCT:
                 perf_stats.loc[stat, column] = str(np.round(value * 100,
-                                                            1)) + '%'
+                                                            3)) + '%'
     if header_rows is None:
         header_rows = date_rows
     else:
@@ -900,8 +900,9 @@ def plot_rolling_volatility(returns, factor_returns=None,
         Daily returns of the strategy, noncumulative.
          - See full explanation in tears.create_full_tear_sheet.
     factor_returns : pd.Series, optional
-        Daily noncumulative returns of the benchmark factor to which betas are
-        computed. Usually a benchmark such as market returns.
+        Daily noncumulative returns of the benchmark factor for which the
+        benchmark rolling volatility is computed. Usually a benchmark such
+        as market returns.
          - This is in the same style as returns.
     rolling_window : int, optional
         The days window over which to compute the volatility.
@@ -1186,7 +1187,7 @@ def show_and_plot_top_positions(returns, positions_alloc,
             ax.legend(loc=legend_loc)
 
         ax.set_xlim((returns.index[0], returns.index[-1]))
-        ax.set_ylabel('Exposure by stock')
+        ax.set_ylabel('Exposure by holding')
 
         if hide_positions:
             ax.legend_.remove()
@@ -1213,7 +1214,7 @@ def plot_max_median_position_concentration(positions, ax=None, **kwargs):
     """
 
     if ax is None:
-        ax = plt.gcf()
+        ax = plt.gca()
 
     alloc_summary = pos.get_max_median_position_concentration(positions)
     colors = ['mediumblue', 'steelblue', 'tomato', 'firebrick']
@@ -1249,7 +1250,7 @@ def plot_sector_allocations(returns, sector_alloc, ax=None, **kwargs):
     """
 
     if ax is None:
-        ax = plt.gcf()
+        ax = plt.gca()
 
     sector_alloc.plot(title='Sector allocation over time',
                       alpha=0.5, ax=ax, **kwargs)
@@ -1322,7 +1323,7 @@ def plot_return_quantiles(returns, live_start_date=None, ax=None, **kwargs):
     return ax
 
 
-def plot_turnover(returns, transactions, positions,
+def plot_turnover(returns, transactions, positions, turnover_denom='AGB',
                   legend_loc='best', ax=None, **kwargs):
     """
     Plots turnover vs. date.
@@ -1344,6 +1345,9 @@ def plot_turnover(returns, transactions, positions,
     positions : pd.DataFrame
         Daily net position values.
          - See full explanation in tears.create_full_tear_sheet.
+    turnover_denom : str, optional
+        Either AGB or portfolio_value, default AGB.
+        - See full explanation in txn.get_turnover.
     legend_loc : matplotlib.loc, optional
         The location of the legend on the plot.
     ax : matplotlib.Axes, optional
@@ -1363,7 +1367,7 @@ def plot_turnover(returns, transactions, positions,
     y_axis_formatter = FuncFormatter(utils.two_dec_places)
     ax.yaxis.set_major_formatter(FuncFormatter(y_axis_formatter))
 
-    df_turnover = txn.get_turnover(positions, transactions)
+    df_turnover = txn.get_turnover(positions, transactions, turnover_denom)
     df_turnover_by_month = df_turnover.resample("M").mean()
     df_turnover.plot(color='steelblue', alpha=1.0, lw=0.5, ax=ax, **kwargs)
     df_turnover_by_month.plot(
@@ -1516,7 +1520,7 @@ def plot_capacity_sweep(returns, transactions, market_data,
     return ax
 
 
-def plot_daily_turnover_hist(transactions, positions,
+def plot_daily_turnover_hist(transactions, positions, turnover_denom='AGB',
                              ax=None, **kwargs):
     """
     Plots a histogram of daily turnover rates.
@@ -1529,6 +1533,9 @@ def plot_daily_turnover_hist(transactions, positions,
     positions : pd.DataFrame
         Daily net position values.
          - See full explanation in tears.create_full_tear_sheet.
+    turnover_denom : str, optional
+        Either AGB or portfolio_value, default AGB.
+        - See full explanation in txn.get_turnover.
     ax : matplotlib.Axes, optional
         Axes upon which to plot.
     **kwargs, optional
@@ -1542,7 +1549,7 @@ def plot_daily_turnover_hist(transactions, positions,
 
     if ax is None:
         ax = plt.gca()
-    turnover = txn.get_turnover(positions, transactions)
+    turnover = txn.get_turnover(positions, transactions, turnover_denom)
     sns.distplot(turnover, ax=ax, **kwargs)
     ax.set_title('Distribution of daily turnover rates')
     ax.set_xlabel('Turnover rate')
@@ -1702,7 +1709,7 @@ def plot_monthly_returns_timeseries(returns, ax=None, **kwargs):
                 y=monthly_rets.values,
                 color='steelblue')
 
-    locs, labels = plt.xticks()
+    _, labels = plt.xticks()
     plt.setp(labels, rotation=90)
 
     # only show x-labels on year boundary

@@ -890,7 +890,7 @@ def get_max_drawdown_underwater(underwater):
         The maximum drawdown's recovery.
     """
 
-    valley = np.argmin(underwater)  # end of the period
+    valley = underwater.idxmin()  # end of the period
     # Find first 0
     peak = underwater[:valley][underwater[:valley] == 0].index[-1]
     # Find last 0
@@ -952,7 +952,7 @@ def get_top_drawdowns(returns, top=10):
     underwater = df_cum / running_max - 1
 
     drawdowns = []
-    for t in range(top):
+    for _ in range(top):
         peak, valley, recovery = get_max_drawdown_underwater(underwater)
         # Slice out draw-down period
         if not pd.isnull(recovery):
@@ -963,7 +963,7 @@ def get_top_drawdowns(returns, top=10):
             underwater = underwater.loc[:peak]
 
         drawdowns.append((peak, valley, recovery))
-        if (len(returns) == 0) or (len(underwater) == 0):
+        if (len(returns) == 0) or (len(underwater) == 0) or (np.min(underwater) == 0):
             break
 
     return drawdowns
@@ -1202,7 +1202,7 @@ def forecast_cone_bootstrap(is_returns, num_days, cone_std=(1., 1.5, 2.),
     return cone_bounds
 
 
-def extract_interesting_date_ranges(returns):
+def extract_interesting_date_ranges(returns, periods=None):
     """
     Extracts returns based on interesting events. See
     gen_date_range_interesting.
@@ -1218,11 +1218,12 @@ def extract_interesting_date_ranges(returns):
     ranges : OrderedDict
         Date ranges, with returns, of all valid events.
     """
-
+    if periods is None:
+        periods = PERIODS
     returns_dupe = returns.copy()
     returns_dupe.index = returns_dupe.index.map(pd.Timestamp)
     ranges = OrderedDict()
-    for name, (start, end) in PERIODS.items():
+    for name, (start, end) in periods.items():
         try:
             period = returns_dupe.loc[start:end]
             if len(period) == 0:
