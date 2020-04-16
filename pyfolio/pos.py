@@ -135,6 +135,13 @@ def extract_pos(positions, cash):
     """
 
     positions = positions.copy()
+    if positions.empty:
+        positions = pd.DataFrame(
+            np.nan,
+            index=[],
+            columns=[
+                'sid', 'amount', 'cost_basis',
+                'last_sale_price', 'last_sale_date'])
     positions['values'] = positions.amount * positions.last_sale_price
 
     cash.name = 'cash'
