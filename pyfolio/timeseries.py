@@ -996,6 +996,12 @@ def gen_drawdown_table(returns, top=10):
                                          'Recovery date',
                                          'Duration'])
 
+    # if there were fewer than the requested number of drawdowns
+    # (which can happen if an early drawdown never recovers),
+    # only return the available number of drawdowns (otherwise
+    # the worst drawdowns plot can mess up the shared X axis)
+    df_drawdowns = df_drawdowns.dropna(how="all")
+
     for i, (peak, valley, recovery) in enumerate(drawdown_periods):
         if pd.isnull(recovery):
             df_drawdowns.loc[i, 'Duration'] = np.nan
