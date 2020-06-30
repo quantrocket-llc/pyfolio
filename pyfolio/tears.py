@@ -499,9 +499,11 @@ def create_returns_tear_sheet(returns, positions=None,
     ax_rolling_returns = plt.subplot(gs[:2, :])
 
     i = 2
-    ax_rolling_returns_vol_match = plt.subplot(gs[i, :],
-                                               sharex=ax_rolling_returns)
-    i += 1
+    if benchmark_rets is not None:
+        ax_rolling_returns_vol_match = plt.subplot(gs[i, :],
+                                                sharex=ax_rolling_returns)
+        i += 1
+
     ax_rolling_returns_log = plt.subplot(gs[i, :],
                                          sharex=ax_rolling_returns)
     i += 1
@@ -535,16 +537,17 @@ def create_returns_tear_sheet(returns, positions=None,
     ax_rolling_returns.set_title(
         'Cumulative returns')
 
-    plotting.plot_rolling_returns(
-        returns,
-        factor_returns=benchmark_rets,
-        live_start_date=live_start_date,
-        cone_std=None,
-        volatility_match=(benchmark_rets is not None),
-        legend_loc=None,
-        ax=ax_rolling_returns_vol_match)
-    ax_rolling_returns_vol_match.set_title(
-        'Cumulative returns volatility matched to benchmark')
+    if benchmark_rets is not None:
+        plotting.plot_rolling_returns(
+            returns,
+            factor_returns=benchmark_rets,
+            live_start_date=live_start_date,
+            cone_std=None,
+            volatility_match=(benchmark_rets is not None),
+            legend_loc=None,
+            ax=ax_rolling_returns_vol_match)
+        ax_rolling_returns_vol_match.set_title(
+            'Cumulative returns volatility matched to benchmark')
 
     plotting.plot_rolling_returns(
         returns,
