@@ -49,7 +49,7 @@ install_reqs = [
     'pytz>=2014.10',
     'scipy>=0.14.0',
     'scikit-learn>=0.16.1',
-    'seaborn>=0.7.1',
+    'seaborn>=0.10.1',
     'empyrical>=0.5.0',
     'quantrocket-moonchart>=1.8.0'
 ]
