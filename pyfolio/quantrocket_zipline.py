@@ -21,7 +21,7 @@ def from_zipline_csv(filepath_or_buffer, **kwargs):
     """
     Creates a full tear sheet from a zipline backtest results CSV.
 
-    Additional kwargs are passed to create_full_tear_sheet.
+    Additional kwargs are passed to :class:`pyfolio.create_full_tear_sheet`.
 
     Parameters
     ----------
