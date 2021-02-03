@@ -63,7 +63,7 @@ def from_moonshot(results, **kwargs):
 
     returns = results.loc["Return"].sum(axis=1)
     positions = results.loc["NetExposure"]
-    positions["cash"] = 1 - positions.sum(axis=1)
+    positions["cash"] = 1 - positions.abs().sum(axis=1)
 
     returns.name = "returns"
     returns = pad_initial(returns)

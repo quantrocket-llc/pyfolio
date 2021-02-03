@@ -50,7 +50,7 @@ MOONSHOT_RESULTS = {
         187.24,
         0.25,
         0.2,
-        0.5,
+        -0.5,
         0.0018087363324810761,
         0.0012016634262259631,
         0.0015990325181403089],
@@ -97,7 +97,7 @@ MOONSHOT_INTRADAY_RESULTS = {
     'AAPL(265598)': [
         0.25,
         0.2,
-        0.5,
+        -0.5,
         0.4,
         0.0018087363324810761,
         0.0012016634262259631,
@@ -159,7 +159,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
                  'cash': 0.5
                  },
                 {'Date': pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'),
-                 'AAPL(265598)': 0.5,
+                 'AAPL(265598)': -0.5,
                  'AMZN(3691937)': 0.5,
                  'cash': 0
                  }
@@ -221,7 +221,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
                  'cash': 0.5
                  },
                 {'Date': pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'),
-                 'AAPL(265598)': 0.5,
+                 'AAPL(265598)': -0.5,
                  'AMZN(3691937)': 0.5,
                  'cash': 0
                  }
@@ -292,8 +292,8 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
                  'AMZN(3691937)': 0.3,
                  'cash': 0.44999999999999996},
                 {'Date': pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'),
-                 'AAPL(265598)': 0.5,
+                 'AAPL(265598)': -0.5,
                  'AMZN(3691937)': 0.5,
-                 'cash': 0.0}
+                 'cash': 0}
             ]
         )
