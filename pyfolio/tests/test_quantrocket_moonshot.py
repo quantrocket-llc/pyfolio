@@ -116,6 +116,9 @@ MOONSHOT_INTRADAY_RESULTS = {
 
 class PyFolioFromMoonshotTestCase(unittest.TestCase):
 
+    def setUp(self):
+        self.maxDiff = None
+
     @patch("pyfolio.quantrocket_moonshot.create_full_tear_sheet")
     def test_from_moonshot_csv(self, mock_create_full_tear_sheet):
 
@@ -138,9 +141,9 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         self.assertDictEqual(
             returns.iloc[124:].to_dict(),
             {
-                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004843304155625394,
-                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013203064e-06,
-                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334757063
+                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.0048433041556253,
+                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013200028e-06,
+                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334756
             })
         self.assertEqual(list(kwargs.keys()), ["positions", "benchmark_rets"])
         benchmark_rets = kwargs["benchmark_rets"]
@@ -201,9 +204,9 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         self.assertDictEqual(
             returns.iloc[124:].to_dict(),
             {
-                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004843304155625394,
-                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013203064e-06,
-                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334757063
+                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.0048433041556253,
+                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013200028e-06,
+                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334756
             })
         self.assertEqual(list(kwargs.keys()), ["positions"])
         positions = kwargs["positions"]
@@ -250,9 +253,9 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         self.assertDictEqual(
             returns.iloc[124:].to_dict(),
             {
-                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004843304155625394,
-                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013203064e-06,
-                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334757063
+                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.0048433041556253,
+                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013200028e-06,
+                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334756
             })
         self.assertSetEqual(set(kwargs.keys()), {"positions", "benchmark_rets", "foo", "baz"})
         self.assertEqual(kwargs["foo"], "bar")
@@ -280,8 +283,8 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         self.assertDictEqual(
             returns.iloc[125:].to_dict(),
             {
-                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004834136029612191,
-                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): 0.008607444030670795})
+                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004834136029612099,
+                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): 0.0086074440306706})
         self.assertEqual(list(kwargs.keys()), ["positions"])
         positions = kwargs["positions"]
         self.assertListEqual(

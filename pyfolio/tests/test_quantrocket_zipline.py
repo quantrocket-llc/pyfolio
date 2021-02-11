@@ -746,6 +746,9 @@ ZIPLINE_RESULTS = [{'dataframe': 'benchmark',
 
 class PyFolioFromZiplineTestCase(unittest.TestCase):
 
+    def setUp(self):
+        self.maxDiff = None
+
     @patch("pyfolio.quantrocket_zipline.create_full_tear_sheet")
     def test_from_zipline_csv_with_padding(self, mock_create_full_tear_sheet):
 
