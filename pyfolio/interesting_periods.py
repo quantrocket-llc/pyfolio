@@ -64,6 +64,12 @@ PERIODS['Oct14'] = (pd.Timestamp('20141001'), pd.Timestamp('20141101'))
 # Market down-turn in August/Sept 2015
 PERIODS['Fall2015'] = (pd.Timestamp('20150815'), pd.Timestamp('20150930'))
 
+# Market down-turn in late 2018
+PERIODS['2018 Bear Market'] = (pd.Timestamp('20180901'), pd.Timestamp('20190131'))
+
+# Covid-19 crash and recovery
+PERIODS['COVID-19'] = (pd.Timestamp('20200201'), pd.Timestamp('20200930'))
+
 # Market regimes
 PERIODS['Low Volatility Bull Market'] = (pd.Timestamp('20050101'),
                                          pd.Timestamp('20070801'))
@@ -71,8 +77,5 @@ PERIODS['Low Volatility Bull Market'] = (pd.Timestamp('20050101'),
 PERIODS['GFC Crash'] = (pd.Timestamp('20070801'),
                         pd.Timestamp('20090401'))
 
-PERIODS['Recovery'] = (pd.Timestamp('20090401'),
+PERIODS['GFC Recovery'] = (pd.Timestamp('20090401'),
                        pd.Timestamp('20130101'))
-
-PERIODS['New Normal'] = (pd.Timestamp('20130101'),
-                         pd.Timestamp('today'))
