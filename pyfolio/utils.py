@@ -136,15 +136,6 @@ def extract_rets_pos_txn_from_zipline(backtest):
     transactions : pd.DataFrame
         Prices and amounts of executed trades. One row per trade.
          - See full explanation in tears.create_full_tear_sheet.
-
-
-    Example (on the Quantopian research platform)
-    ---------------------------------------------
-    >>> backtest = my_algo.run()
-    >>> returns, positions, transactions =
-    >>>     pyfolio.utils.extract_rets_pos_txn_from_zipline(backtest)
-    >>> pyfolio.tears.create_full_tear_sheet(returns,
-    >>>     positions, transactions)
     """
 
     backtest.index = backtest.index.normalize()

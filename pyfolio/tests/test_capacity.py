@@ -1,15 +1,15 @@
 from __future__ import division
 from unittest import TestCase
-from nose_parameterized import parameterized
+from parameterized import parameterized
 
 from pandas import (
     Series,
     DataFrame,
     date_range,
-    datetime,
     concat
 )
-from pandas.util.testing import (assert_frame_equal,
+from datetime import datetime
+from pandas.testing import (assert_frame_equal,
                                  assert_series_equal)
 
 from pyfolio.capacity import (days_to_liquidate_positions,
@@ -21,6 +21,7 @@ from pyfolio.capacity import (days_to_liquidate_positions,
 
 class CapacityTestCase(TestCase):
     dates = date_range(start='2015-01-01', freq='D', periods=3)
+    dates.freq = None
 
     positions = DataFrame([[1.0, 3.0, 0.0],
                            [0.0, 1.0, 1.0],
@@ -103,7 +104,7 @@ class CapacityTestCase(TestCase):
                              columns=['symbol', 'amount', 'price', 'volume'],
                              index=self.dates)
 
-        assert_frame_equal(daily_txn, expected, check_less_precise=True)
+        assert_frame_equal(daily_txn, expected)
 
     @parameterized.expand([(1000000, 1, [0.9995, 0.9999375, 0.99998611]),
                            (10000000, 1, [0.95, 0.99375, 0.998611]),

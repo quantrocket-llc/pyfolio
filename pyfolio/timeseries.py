@@ -23,16 +23,9 @@ import pandas as pd
 import scipy as sp
 import scipy.stats as stats
 
-from .deprecate import deprecated
 from .interesting_periods import PERIODS
 from .txn import get_turnover
 from .utils import APPROX_BDAYS_PER_MONTH, APPROX_BDAYS_PER_YEAR
-from .utils import DAILY
-
-DEPRECATION_WARNING = ("Risk functions in pyfolio.timeseries are deprecated "
-                       "and will be removed in a future release. Please "
-                       "install the empyrical package instead.")
-
 
 def var_cov_var_normal(P, c, mu=0, sigma=1):
     """
@@ -56,357 +49,6 @@ def var_cov_var_normal(P, c, mu=0, sigma=1):
 
     alpha = sp.stats.norm.ppf(1 - c, mu, sigma)
     return P - P * (alpha + 1)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def max_drawdown(returns):
-    """
-    Determines the maximum drawdown of a strategy.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-         - See full explanation in tears.create_full_tear_sheet.
-
-    Returns
-    -------
-    float
-        Maximum drawdown.
-
-    Note
-    -----
-    See https://en.wikipedia.org/wiki/Drawdown_(economics) for more details.
-    """
-
-    return ep.max_drawdown(returns)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def annual_return(returns, period=DAILY):
-    """
-    Determines the mean annual growth rate of returns.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Periodic returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    period : str, optional
-        Defines the periodicity of the 'returns' data for purposes of
-        annualizing. Can be 'monthly', 'weekly', or 'daily'.
-        - Defaults to 'daily'.
-
-    Returns
-    -------
-    float
-        Annual Return as CAGR (Compounded Annual Growth Rate).
-    """
-
-    return ep.annual_return(returns, period=period)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def annual_volatility(returns, period=DAILY):
-    """
-    Determines the annual volatility of a strategy.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Periodic returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    period : str, optional
-        Defines the periodicity of the 'returns' data for purposes of
-        annualizing volatility. Can be 'monthly' or 'weekly' or 'daily'.
-        - Defaults to 'daily'.
-
-    Returns
-    -------
-    float
-        Annual volatility.
-    """
-
-    return ep.annual_volatility(returns, period=period)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def calmar_ratio(returns, period=DAILY):
-    """
-    Determines the Calmar ratio, or drawdown ratio, of a strategy.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    period : str, optional
-        Defines the periodicity of the 'returns' data for purposes of
-        annualizing. Can be 'monthly', 'weekly', or 'daily'.
-        - Defaults to 'daily'.
-
-    Returns
-    -------
-    float
-        Calmar ratio (drawdown ratio) as float. Returns np.nan if there is no
-        calmar ratio.
-
-    Note
-    -----
-    See https://en.wikipedia.org/wiki/Calmar_ratio for more details.
-    """
-
-    return ep.calmar_ratio(returns, period=period)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def omega_ratio(returns, annual_return_threshhold=0.0):
-    """
-    Determines the Omega ratio of a strategy.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    annual_return_threshold : float, optional
-        Minimum acceptable return of the investor. Annual threshold over which
-        returns are considered positive or negative. It is converted to a
-        value appropriate for the period of the returns for this ratio.
-        E.g. An annual minimum acceptable return of 100 translates to a daily
-        minimum acceptable return of 0.01848.
-            (1 + 100) ** (1. / 252) - 1 = 0.01848
-        Daily returns must exceed this value to be considered positive. The
-        daily return yields the desired annual return when compounded over
-        the average number of business days in a year.
-            (1 + 0.01848) ** 252 - 1 = 99.93
-        - Defaults to 0.0
-
-
-    Returns
-    -------
-    float
-        Omega ratio.
-
-    Note
-    -----
-    See https://en.wikipedia.org/wiki/Omega_ratio for more details.
-    """
-
-    return ep.omega_ratio(returns,
-                          required_return=annual_return_threshhold)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def sortino_ratio(returns, required_return=0, period=DAILY):
-    """
-    Determines the Sortino ratio of a strategy.
-
-    Parameters
-    ----------
-    returns : pd.Series or pd.DataFrame
-        Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    required_return: float / series
-        minimum acceptable return
-    period : str, optional
-        Defines the periodicity of the 'returns' data for purposes of
-        annualizing. Can be 'monthly', 'weekly', or 'daily'.
-        - Defaults to 'daily'.
-
-    Returns
-    -------
-    depends on input type
-    series ==> float
-    DataFrame ==> np.array
-
-        Annualized Sortino ratio.
-    """
-
-    return ep.sortino_ratio(returns, required_return=required_return)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def downside_risk(returns, required_return=0, period=DAILY):
-    """
-    Determines the downside deviation below a threshold
-
-    Parameters
-    ----------
-    returns : pd.Series or pd.DataFrame
-        Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    required_return: float / series
-        minimum acceptable return
-    period : str, optional
-        Defines the periodicity of the 'returns' data for purposes of
-        annualizing. Can be 'monthly', 'weekly', or 'daily'.
-        - Defaults to 'daily'.
-
-    Returns
-    -------
-    depends on input type
-    series ==> float
-    DataFrame ==> np.array
-
-        Annualized downside deviation
-    """
-
-    return ep.downside_risk(returns,
-                            required_return=required_return,
-                            period=period)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def sharpe_ratio(returns, risk_free=0, period=DAILY):
-    """
-    Determines the Sharpe ratio of a strategy.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    risk_free : int, float
-        Constant risk-free return throughout the period.
-    period : str, optional
-        Defines the periodicity of the 'returns' data for purposes of
-        annualizing. Can be 'monthly', 'weekly', or 'daily'.
-        - Defaults to 'daily'.
-
-    Returns
-    -------
-    float
-        Sharpe ratio.
-    np.nan
-        If insufficient length of returns or if if adjusted returns are 0.
-
-    Note
-    -----
-    See https://en.wikipedia.org/wiki/Sharpe_ratio for more details.
-    """
-
-    return ep.sharpe_ratio(returns, risk_free=risk_free, period=period)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def alpha_beta(returns, factor_returns):
-    """
-    Calculates both alpha and beta.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    factor_returns : pd.Series
-        Daily noncumulative returns of the benchmark factor to which betas are
-        computed. Usually a benchmark such as market returns.
-         - This is in the same style as returns.
-
-    Returns
-    -------
-    float
-        Alpha.
-    float
-        Beta.
-    """
-
-    return ep.alpha_beta(returns, factor_returns=factor_returns)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def alpha(returns, factor_returns):
-    """
-    Calculates annualized alpha.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    factor_returns : pd.Series
-        Daily noncumulative returns of the benchmark factor to which betas are
-        computed. Usually a benchmark such as market returns.
-         - This is in the same style as returns.
-
-    Returns
-    -------
-    float
-        Alpha.
-    """
-
-    return ep.alpha(returns, factor_returns=factor_returns)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def beta(returns, factor_returns):
-    """
-    Calculates beta.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    factor_returns : pd.Series
-        Daily noncumulative returns of the benchmark factor to which betas are
-        computed. Usually a benchmark such as market returns.
-         - This is in the same style as returns.
-
-    Returns
-    -------
-    float
-        Beta.
-    """
-
-    return ep.beta(returns, factor_returns)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def stability_of_timeseries(returns):
-    """
-    Determines R-squared of a linear fit to the cumulative
-    log returns. Computes an ordinary least squares linear fit,
-    and returns R-squared.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-
-    Returns
-    -------
-    float
-        R-squared.
-    """
-
-    return ep.stability_of_timeseries(returns)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def tail_ratio(returns):
-    """
-    Determines the ratio between the right (95%) and left tail (5%).
-
-    For example, a ratio of 0.25 means that losses are four times
-    as bad as profits.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-         - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-
-    Returns
-    -------
-    float
-        tail ratio
-    """
-
-    return ep.tail_ratio(returns)
-
 
 def common_sense_ratio(returns):
     """
@@ -452,56 +94,6 @@ def normalize(returns, starting_value=1):
     """
 
     return starting_value * (returns / returns.iloc[0])
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def cum_returns(returns, starting_value=0):
-    """
-    Compute cumulative returns from simple returns.
-
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-         - See full explanation in tears.create_full_tear_sheet.
-    starting_value : float, optional
-       The starting returns (default 1).
-
-    Returns
-    -------
-    pandas.Series
-        Series of cumulative returns.
-
-    Notes
-    -----
-    For increased numerical accuracy, convert input to log returns
-    where it is possible to sum instead of multiplying.
-    """
-
-    return ep.cum_returns(returns, starting_value=starting_value)
-
-
-@deprecated(msg=DEPRECATION_WARNING)
-def aggregate_returns(returns, convert_to):
-    """
-    Aggregates returns by week, month, or year.
-
-    Parameters
-    ----------
-    returns : pd.Series
-       Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
-    convert_to : str
-        Can be 'weekly', 'monthly', or 'yearly'.
-
-    Returns
-    -------
-    pd.Series
-        Aggregated returns.
-    """
-
-    return ep.aggregate_returns(returns, convert_to=convert_to)
-
 
 def rolling_beta(returns, factor_returns,
                  rolling_window=APPROX_BDAYS_PER_MONTH * 6):
@@ -852,7 +444,7 @@ def get_max_drawdown(returns):
     ----------
     returns : pd.Series
         Daily returns of the strategy, noncumulative.
-        - See full explanation in :func:`~pyfolio.timeseries.cum_returns`.
+        - See full explanation in :func:`~empyrical.cum_returns`.
 
     Returns
     -------
@@ -865,7 +457,7 @@ def get_max_drawdown(returns):
     """
 
     returns = returns.copy()
-    df_cum = cum_returns(returns, 1.0)
+    df_cum = ep.cum_returns(returns, 1.0)
     running_max = np.maximum.accumulate(df_cum)
     underwater = df_cum / running_max - 1
     return get_max_drawdown_underwater(underwater)
@@ -1173,12 +765,15 @@ def extract_interesting_date_ranges(returns, periods=None):
     returns_dupe.index = returns_dupe.index.map(pd.Timestamp)
     ranges = OrderedDict()
     for name, (start, end) in periods.items():
+        start = start.tz_localize(returns_dupe.index.tz)
+        end = end.tz_localize(returns_dupe.index.tz)
         try:
             period = returns_dupe.loc[start:end]
+        except KeyError:
+            continue
+        else:
             if len(period) == 0:
                 continue
             ranges[name] = period
-        except BaseException:
-            continue
 
     return ranges

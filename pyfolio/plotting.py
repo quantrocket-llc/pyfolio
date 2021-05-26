@@ -791,7 +791,7 @@ def plot_rolling_returns(returns,
 
     if factor_returns is not None:
         cum_factor_returns = ep.cum_returns(
-            factor_returns[cum_rets.index], 1.0)
+            factor_returns.loc[factor_returns.index.intersection(cum_rets.index)], 1.0)
         cum_factor_returns.plot(lw=2, color='gray',
                                 label=factor_returns.name, alpha=0.60,
                                 ax=ax, **kwargs)
@@ -1550,7 +1550,7 @@ def plot_daily_turnover_hist(transactions, positions, turnover_denom='AGB',
     if ax is None:
         ax = plt.gca()
     turnover = txn.get_turnover(positions, transactions, turnover_denom)
-    sns.distplot(turnover, ax=ax, **kwargs)
+    sns.histplot(turnover, ax=ax, **kwargs)
     ax.set_title('Distribution of daily turnover rates')
     ax.set_xlabel('Turnover rate')
     return ax

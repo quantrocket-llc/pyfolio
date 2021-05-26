@@ -2,9 +2,9 @@ from __future__ import division
 
 import os
 from unittest import TestCase
-from nose_parameterized import parameterized
+from parameterized import parameterized
 from numpy.testing import assert_allclose, assert_almost_equal
-from pandas.util.testing import assert_series_equal
+from pandas.testing import assert_series_equal
 
 import numpy as np
 import pandas as pd
@@ -264,7 +264,7 @@ class TestStats(TestCase):
     dt_2 = pd.date_range('2000-1-3', periods=8, freq='D')
 
     @parameterized.expand([
-        (simple_rets[:5], 2, [np.nan, np.inf, np.inf, 11.224972160321, np.inf])
+        (simple_rets[:5], 2, [np.nan, np.inf, np.inf, 11.224972160321, np.nan])
     ])
     def test_sharpe_2(self, returns, rolling_sharpe_window, expected):
         np.testing.assert_array_almost_equal(

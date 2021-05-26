@@ -5,7 +5,7 @@ from pandas import (
     DataFrame,
     date_range
 )
-from pandas.util.testing import (assert_series_equal)
+from pandas.testing import (assert_series_equal)
 
 from pyfolio.txn import (get_turnover,
                          adjust_returns_for_slippage)
@@ -22,7 +22,7 @@ class TransactionsTestCase(TestCase):
         with 200% of the AGB traded each day, the daily
         turnover rate should be 2.0.
         """
-        dates = date_range(start='2015-01-01', freq='D', periods=20)
+        dates = date_range(start='2015-01-01', freq='D', periods=20, tz="UTC")
 
         # In this test, there is one sid (0) and a cash column
         positions = DataFrame([[10.0, 10.0]]*len(dates),
@@ -49,6 +49,7 @@ class TransactionsTestCase(TestCase):
         # in get_turnover. On most days, we get 0.8 because we have 20
         # transacted and mean(10, 40) = 25, so 20/25.
         expected = Series([1.0] + [0.8] * (len(dates) - 1), index=dates)
+        expected.index.freq = None
         result = get_turnover(positions, transactions)
 
         assert_series_equal(result, expected)
@@ -65,7 +66,7 @@ class TransactionsTestCase(TestCase):
         assert_series_equal(result, expected)
 
     def test_adjust_returns_for_slippage(self):
-        dates = date_range(start='2015-01-01', freq='D', periods=20)
+        dates = date_range(start='2015-01-01', freq='D', periods=20, tz="UTC")
 
         positions = DataFrame([[0.0, 10.0]]*len(dates),
                               columns=[0, 'cash'], index=dates)

@@ -18,7 +18,6 @@ import warnings
 from time import time
 
 import empyrical as ep
-from IPython.display import display, Markdown
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -945,13 +944,13 @@ def create_round_trip_tear_sheet(returns, positions, transactions,
     plotting.plot_prob_profit_trade(trades, ax=ax_prob_profit_trade)
 
     trade_holding_times = [x.days for x in trades['duration']]
-    sns.distplot(trade_holding_times, kde=False, ax=ax_holding_time)
+    sns.histplot(trade_holding_times, kde=False, ax=ax_holding_time)
     ax_holding_time.set(xlabel='Holding time in days')
 
-    sns.distplot(trades.pnl, kde=False, ax=ax_pnl_per_round_trip_dollars)
+    sns.histplot(trades.pnl, kde=False, ax=ax_pnl_per_round_trip_dollars)
     ax_pnl_per_round_trip_dollars.set(xlabel='PnL per round-trip trade in $')
 
-    sns.distplot(trades.returns.dropna() * 100, kde=False,
+    sns.histplot(trades.returns.dropna() * 100, kde=False,
                  ax=ax_pnl_per_round_trip_pct)
     ax_pnl_per_round_trip_pct.set(
         xlabel='Round-trip returns in %')

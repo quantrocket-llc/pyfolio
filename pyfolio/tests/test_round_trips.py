@@ -1,4 +1,4 @@
-from nose_parameterized import parameterized
+from parameterized import parameterized
 
 from unittest import TestCase
 
@@ -10,7 +10,7 @@ from pandas import (
     Timedelta,
     read_csv
 )
-from pandas.util.testing import (assert_frame_equal)
+from pandas.testing import (assert_frame_equal)
 
 import os
 import gzip
@@ -161,11 +161,11 @@ class RoundTripTestCase(TestCase):
 
         expected_ix = dates[:3].append(DatetimeIndex([dates[2] +
                                                       Timedelta(seconds=1)]))
-        expected = DataFrame(data=[[2, 10, 'A'],
-                                   [-5, 10, 'A'],
-                                   [-1, 10., 'B'],
-                                   [3, 20., 'A']],
-                             columns=['amount', 'price', 'symbol'],
+        expected = DataFrame(data=[['A', 2, 10],
+                                   ['A', -5, 10],
+                                   ['B', -1, 10.],
+                                   ['A', 3, 20.]],
+                             columns=['symbol', 'amount', 'price'],
                              index=expected_ix)
 
         transactions_closed = add_closing_transactions(positions, transactions)
