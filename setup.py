@@ -39,27 +39,6 @@ classifiers = ['Development Status :: 4 - Beta',
                'Topic :: Scientific/Engineering :: Mathematics',
                'Operating System :: OS Independent']
 
-support_ipython_6 = (sys.version_info >= (3, 3))
-
-install_reqs = [
-    'ipython>=3.2.3' if support_ipython_6 else 'ipython>=3.2.3, <6',
-    'matplotlib>=1.4.0',
-    'numpy>=1.11.1',
-    'pandas>=0.18.1',
-    'pytz>=2014.10',
-    'scipy>=0.14.0',
-    'seaborn>=0.10.1',
-    'empyrical>=0.5.0',
-    'quantrocket-moonchart>=1.8.0'
-]
-
-test_reqs = ['nose>=1.3.7', 'nose-parameterized>=0.5.0', 'runipy>=0.1.3']
-
-extras_reqs = {
-    'test': test_reqs,
-    'all': test_reqs
-}
-
 if __name__ == "__main__":
     setup(
         name=DISTNAME,
@@ -73,9 +52,5 @@ if __name__ == "__main__":
         long_description=LONG_DESCRIPTION,
         packages=['pyfolio', 'pyfolio.tests'],
         package_data={'pyfolio': ['data/*.*']},
-        classifiers=classifiers,
-        install_requires=install_reqs,
-        extras_require=extras_reqs,
-        tests_require=test_reqs,
-        test_suite='nose.collector',
+        classifiers=classifiers
     )
