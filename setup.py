@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 import versioneer
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
         license=LICENSE,
         url=URL,
         long_description=LONG_DESCRIPTION,
-        packages=['pyfolio', 'pyfolio.tests'],
-        package_data={'pyfolio': ['data/*.*']},
+        packages=find_packages(include=['pyfolio', 'pyfolio.*']),
+        package_data={'pyfolio.tests.test_data': ['*.csv', '*.gz']},
         classifiers=classifiers
     )
