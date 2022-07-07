@@ -772,9 +772,9 @@ class PyFolioFromZiplineTestCase(unittest.TestCase):
         self.assertDictEqual(
             returns.iloc[124:].to_dict(),
             {
-                pd.Timestamp('2017-12-20 00:00:00+0000', tz='UTC', freq='B'): -0.0008257597361536195,
-                pd.Timestamp('2017-12-21 00:00:00+0000', tz='UTC', freq='B'): -0.00192836508393468,
-                pd.Timestamp('2017-12-22 00:00:00+0000', tz='UTC', freq='B'): 0.0004600216334498253
+                pd.Timestamp('2017-12-20 00:00:00+0000', tz='UTC'): -0.0008257597361536195,
+                pd.Timestamp('2017-12-21 00:00:00+0000', tz='UTC'): -0.00192836508393468,
+                pd.Timestamp('2017-12-22 00:00:00+0000', tz='UTC'): 0.0004600216334498253
             })
 
         self.assertEqual(list(kwargs.keys()), ["positions", "transactions", "benchmark_rets"])
@@ -786,9 +786,9 @@ class PyFolioFromZiplineTestCase(unittest.TestCase):
         self.assertDictEqual(
             benchmark_rets.iloc[124:].to_dict(),
             {
-                pd.Timestamp('2017-12-20 00:00:00+0000', tz='UTC', freq='B'): -0.0005239410483275364,
-                pd.Timestamp('2017-12-21 00:00:00+0000', tz='UTC', freq='B'): 0.0020594728006451124,
-                pd.Timestamp('2017-12-22 00:00:00+0000', tz='UTC', freq='B'): -0.0002615691586591584
+                pd.Timestamp('2017-12-20 00:00:00+0000', tz='UTC'): -0.0005239410483275364,
+                pd.Timestamp('2017-12-21 00:00:00+0000', tz='UTC'): 0.0020594728006451124,
+                pd.Timestamp('2017-12-22 00:00:00+0000', tz='UTC'): -0.0002615691586591584
             })
 
 

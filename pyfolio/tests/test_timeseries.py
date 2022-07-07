@@ -264,7 +264,7 @@ class TestStats(TestCase):
     dt_2 = pd.date_range('2000-1-3', periods=8, freq='D')
 
     @parameterized.expand([
-        (simple_rets[:5], 2, [np.nan, np.inf, np.inf, 11.224972160321, np.nan])
+        (simple_rets[:5], 2, [np.nan, np.inf, np.inf, 11.224972160321, 0])
     ])
     def test_sharpe_2(self, returns, rolling_sharpe_window, expected):
         np.testing.assert_array_almost_equal(
