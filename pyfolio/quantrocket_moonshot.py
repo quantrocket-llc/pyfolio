@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Union, TextIO
 import pandas as pd
 import numpy as np
 from quantrocket.moonshot import read_moonshot_csv
@@ -38,7 +39,7 @@ def _get_benchmark_returns(benchmark_prices):
     benchmark_prices.name = "benchmark"
     return benchmark_prices.pct_change()
 
-def from_moonshot(results, **kwargs):
+def from_moonshot(results: pd.DataFrame, **kwargs) -> None:
     """
     Creates a full tear sheet from a moonshot backtest results DataFrame.
 
@@ -82,7 +83,7 @@ def from_moonshot(results, **kwargs):
         **kwargs
     )
 
-def from_moonshot_csv(filepath_or_buffer, **kwargs):
+def from_moonshot_csv(filepath_or_buffer: Union[str, TextIO], **kwargs) -> None:
     """
     Creates a full tear sheet from a moonshot backtest results CSV.
 

@@ -17,6 +17,7 @@ from __future__ import division
 import warnings
 from time import time
 
+from typing import Union
 import empyrical as ep
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
@@ -40,23 +41,25 @@ def timer(msg_body, previous_time):
     return current_time
 
 
-def create_full_tear_sheet(returns,
-                           positions=None,
-                           transactions=None,
-                           market_data=None,
-                           benchmark_rets=None,
-                           slippage=None,
-                           live_start_date=None,
-                           sector_mappings=None,
-                           round_trips=False,
-                           estimate_intraday='infer',
-                           hide_positions=False,
-                           cone_std=(1.0, 1.5, 2.0),
-                           bootstrap=False,
-                           unadjusted_returns=None,
-                           turnover_denom='AGB',
-                           set_context=True,
-                           header_rows=None):
+def create_full_tear_sheet(
+    returns: pd.Series,
+    positions: pd.DataFrame = None,
+    transactions: pd.DataFrame = None,
+    market_data: pd.DataFrame = None,
+    benchmark_rets: pd.Series = None,
+    slippage: float = None,
+    live_start_date: pd.Timestamp = None,
+    sector_mappings: Union[dict, pd.Series] = None,
+    round_trips: bool = False,
+    estimate_intraday: Union[bool, str] = 'infer',
+    hide_positions: bool = False,
+    cone_std: Union[float, tuple[float, float, float]] = (1.0, 1.5, 2.0),
+    bootstrap: bool = False,
+    unadjusted_returns: pd.Series = None,
+    turnover_denom: str = 'AGB',
+    set_context: bool = True,
+    header_rows: dict[str, str] = None
+    ) -> None:
     """
     Generate a number of tear sheets that are useful
     for analyzing a strategy's performance.
@@ -221,15 +224,17 @@ def create_full_tear_sheet(returns,
                                            estimate_intraday=False)
 
 @plotting.customize
-def create_simple_tear_sheet(returns,
-                             positions=None,
-                             transactions=None,
-                             benchmark_rets=None,
-                             slippage=None,
-                             estimate_intraday='infer',
-                             live_start_date=None,
-                             turnover_denom='AGB',
-                             header_rows=None):
+def create_simple_tear_sheet(
+    returns: pd.Series,
+    positions: pd.DataFrame = None,
+    transactions: pd.DataFrame = None,
+    benchmark_rets: pd.Series = None,
+    slippage: float = None,
+    estimate_intraday: Union[bool, str] = 'infer',
+    live_start_date: pd.Timestamp = None,
+    turnover_denom: str = 'AGB',
+    header_rows: dict[str, str] = None
+    ) -> None:
     """
     Simpler version of :class:`pyfolio.create_full_tear_sheet`; generates summary performance
     statistics and important plots as a single image.
@@ -427,15 +432,18 @@ def create_simple_tear_sheet(returns,
 
 
 @plotting.customize
-def create_returns_tear_sheet(returns, positions=None,
-                              transactions=None,
-                              live_start_date=None,
-                              cone_std=(1.0, 1.5, 2.0),
-                              benchmark_rets=None,
-                              bootstrap=False,
-                              turnover_denom='AGB',
-                              header_rows=None,
-                              return_fig=False):
+def create_returns_tear_sheet(
+    returns: pd.Series,
+    positions: pd.DataFrame = None,
+    transactions: pd.DataFrame = None,
+    live_start_date: pd.Timestamp = None,
+    cone_std: Union[float, tuple[float, float, float]] = (1.0, 1.5, 2.0),
+    benchmark_rets: pd.Series = None,
+    bootstrap: bool = False,
+    turnover_denom: str = 'AGB',
+    header_rows: dict[str, str] = None,
+    return_fig: bool = False
+    ) -> Union[plt.Figure, None]:
     """
     Generate a number of plots for analyzing a strategy's returns.
 
@@ -644,10 +652,16 @@ def create_returns_tear_sheet(returns, positions=None,
 
 
 @plotting.customize
-def create_position_tear_sheet(returns, positions,
-                               show_and_plot_top_pos=2, hide_positions=False,
-                               sector_mappings=None, transactions=None,
-                               estimate_intraday='infer', return_fig=False):
+def create_position_tear_sheet(
+    returns: pd.Series,
+    positions: pd.DataFrame,
+    show_and_plot_top_pos: int = 2,
+    hide_positions: bool = False,
+    sector_mappings: Union[dict[str, str], pd.Series] = None,
+    transactions: pd.DataFrame = None,
+    estimate_intraday: Union[bool, str] = 'infer',
+    return_fig: bool = False
+    ) -> Union[plt.Figure, None]:
     """
     Generate a number of plots for analyzing a
     strategy's positions and holdings.
@@ -758,9 +772,15 @@ def create_position_tear_sheet(returns, positions,
 
 
 @plotting.customize
-def create_txn_tear_sheet(returns, positions, transactions,
-                          turnover_denom='AGB', unadjusted_returns=None,
-                          estimate_intraday='infer', return_fig=False):
+def create_txn_tear_sheet(
+    returns: pd.Series,
+    positions: pd.DataFrame,
+    transactions: pd.DataFrame,
+    turnover_denom: str = 'AGB',
+    unadjusted_returns: pd.Series = None,
+    estimate_intraday: Union[bool, str] = 'infer',
+    return_fig: bool = False
+    ) -> Union[plt.Figure, None]:
     """
     Generate a number of plots for analyzing a strategy's transactions.
 
@@ -864,9 +884,14 @@ def create_txn_tear_sheet(returns, positions, transactions,
 
 
 @plotting.customize
-def create_round_trip_tear_sheet(returns, positions, transactions,
-                                 sector_mappings=None,
-                                 estimate_intraday='infer', return_fig=False):
+def create_round_trip_tear_sheet(
+    returns: pd.Series,
+    positions: pd.DataFrame,
+    transactions: pd.DataFrame,
+    sector_mappings: Union[dict[str, str], pd.Series] = None,
+    estimate_intraday: Union[bool, str] = 'infer',
+    return_fig: bool = False
+    ) -> Union[plt.Figure, None]:
     """
     Generate a number of figures and plots describing the duration,
     frequency, and profitability of trade "round trips."
@@ -962,9 +987,13 @@ def create_round_trip_tear_sheet(returns, positions, transactions,
 
 
 @plotting.customize
-def create_interesting_times_tear_sheet(returns, benchmark_rets=None,
-                                        periods=None, legend_loc='best',
-                                        return_fig=False):
+def create_interesting_times_tear_sheet(
+    returns: pd.Series,
+    benchmark_rets: pd.Series = None,
+    periods: dict[str, tuple[pd.Timestamp, pd.Timestamp]] = None,
+    legend_loc: str = 'best',
+    return_fig: bool = False
+    ) -> Union[plt.Figure, None]:
     """
     Generate a number of returns plots around interesting points in time,
     like the flash crash and 9/11.
@@ -1052,14 +1081,18 @@ def create_interesting_times_tear_sheet(returns, benchmark_rets=None,
 
 
 @plotting.customize
-def create_capacity_tear_sheet(returns, positions, transactions,
-                               market_data,
-                               liquidation_daily_vol_limit=0.2,
-                               trade_daily_vol_limit=0.05,
-                               last_n_days=utils.APPROX_BDAYS_PER_MONTH * 6,
-                               days_to_liquidate_limit=1,
-                               estimate_intraday='infer',
-                               return_fig=False):
+def create_capacity_tear_sheet(
+    returns: pd.Series,
+    positions: pd.DataFrame,
+    transactions: pd.DataFrame,
+    market_data: pd.DataFrame,
+    liquidation_daily_vol_limit: float = 0.2,
+    trade_daily_vol_limit: float = 0.05,
+    last_n_days: int = utils.APPROX_BDAYS_PER_MONTH * 6,
+    days_to_liquidate_limit: int = 1,
+    estimate_intraday: Union[bool, str] = 'infer',
+    return_fig: bool = False
+    ) -> Union[plt.Figure, None]:
     """
     Generates a report detailing portfolio size constraints set by
     least liquid tickers. Plots a "capacity sweep," a curve describing

@@ -13,8 +13,6 @@
 # limitations under the License.
 
 import pandas as pd
-from .tears import create_full_tear_sheet
-from quantrocket.zipline import ZiplineBacktestResult
 
 def pad_initial(df):
     """

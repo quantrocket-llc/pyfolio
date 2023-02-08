@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Union, TextIO
 import pandas as pd
 from .tears import create_full_tear_sheet
 from .quantrocket_utils import pad_initial
 from quantrocket.zipline import ZiplineBacktestResult
 
-def from_zipline_csv(filepath_or_buffer, **kwargs):
+def from_zipline_csv(filepath_or_buffer: Union[str, TextIO], **kwargs) -> None:
     """
     Creates a full tear sheet from a zipline backtest results CSV.
 
