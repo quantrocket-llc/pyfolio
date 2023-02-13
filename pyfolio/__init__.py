@@ -15,5 +15,14 @@ from .quantrocket_zipline import from_zipline_csv # noqa
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = ['utils', 'timeseries', 'pos', 'txn',
-           'interesting_periods', 'capacity', 'round_trips']
+__all__ = [
+    'utils',
+    'timeseries',
+    'pos',
+    'txn',
+    'interesting_periods',
+    'capacity',
+    'round_trips',
+    'from_zipline_csv',
+    'from_moonshot_csv'
+    ]

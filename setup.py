@@ -51,6 +51,9 @@ if __name__ == "__main__":
         url=URL,
         long_description=LONG_DESCRIPTION,
         packages=find_packages(include=['pyfolio', 'pyfolio.*']),
-        package_data={'pyfolio.tests.test_data': ['*.csv', '*.gz']},
+        package_data={
+            'pyfolio._tests.test_data': ['*.csv', '*.gz'],
+            "pyfolio": ["py.typed"],
+        },
         classifiers=classifiers
     )
