@@ -53,20 +53,20 @@ def timer(msg_body, previous_time):
 
 
 def create_full_tear_sheet(
-    returns: pd.Series,
+    returns: 'pd.Series[float]',
     positions: pd.DataFrame = None,
     transactions: pd.DataFrame = None,
     market_data: pd.DataFrame = None,
-    benchmark_rets: pd.Series = None,
+    benchmark_rets: 'pd.Series[float]' = None,
     slippage: float = None,
     live_start_date: pd.Timestamp = None,
-    sector_mappings: Union[dict, pd.Series] = None,
+    sector_mappings: Union[dict[str, str], 'pd.Series[str]'] = None,
     round_trips: bool = False,
     estimate_intraday: Union[bool, str] = 'infer',
     hide_positions: bool = False,
     cone_std: Union[float, tuple[float, float, float]] = (1.0, 1.5, 2.0),
     bootstrap: bool = False,
-    unadjusted_returns: pd.Series = None,
+    unadjusted_returns: 'pd.Series[float]' = None,
     turnover_denom: str = 'AGB',
     set_context: bool = True,
     header_rows: dict[str, str] = None
@@ -236,10 +236,10 @@ def create_full_tear_sheet(
 
 @plotting.customize
 def create_simple_tear_sheet(
-    returns: pd.Series,
+    returns: 'pd.Series[float]',
     positions: pd.DataFrame = None,
     transactions: pd.DataFrame = None,
-    benchmark_rets: pd.Series = None,
+    benchmark_rets: 'pd.Series[float]' = None,
     slippage: float = None,
     estimate_intraday: Union[bool, str] = 'infer',
     live_start_date: pd.Timestamp = None,
@@ -444,12 +444,12 @@ def create_simple_tear_sheet(
 
 @plotting.customize
 def create_returns_tear_sheet(
-    returns: pd.Series,
+    returns: 'pd.Series[float]',
     positions: pd.DataFrame = None,
     transactions: pd.DataFrame = None,
     live_start_date: pd.Timestamp = None,
     cone_std: Union[float, tuple[float, float, float]] = (1.0, 1.5, 2.0),
-    benchmark_rets: pd.Series = None,
+    benchmark_rets: 'pd.Series[float]' = None,
     bootstrap: bool = False,
     turnover_denom: str = 'AGB',
     header_rows: dict[str, str] = None,
@@ -664,11 +664,11 @@ def create_returns_tear_sheet(
 
 @plotting.customize
 def create_position_tear_sheet(
-    returns: pd.Series,
+    returns: 'pd.Series[float]',
     positions: pd.DataFrame,
     show_and_plot_top_pos: int = 2,
     hide_positions: bool = False,
-    sector_mappings: Union[dict[str, str], pd.Series] = None,
+    sector_mappings: Union[dict[str, str], 'pd.Series[str]'] = None,
     transactions: pd.DataFrame = None,
     estimate_intraday: Union[bool, str] = 'infer',
     return_fig: bool = False
@@ -784,11 +784,11 @@ def create_position_tear_sheet(
 
 @plotting.customize
 def create_txn_tear_sheet(
-    returns: pd.Series,
+    returns: 'pd.Series[float]',
     positions: pd.DataFrame,
     transactions: pd.DataFrame,
     turnover_denom: str = 'AGB',
-    unadjusted_returns: pd.Series = None,
+    unadjusted_returns: 'pd.Series[float]' = None,
     estimate_intraday: Union[bool, str] = 'infer',
     return_fig: bool = False
     ) -> Union[plt.Figure, None]:
@@ -896,10 +896,10 @@ def create_txn_tear_sheet(
 
 @plotting.customize
 def create_round_trip_tear_sheet(
-    returns: pd.Series,
+    returns: 'pd.Series[float]',
     positions: pd.DataFrame,
     transactions: pd.DataFrame,
-    sector_mappings: Union[dict[str, str], pd.Series] = None,
+    sector_mappings: Union[dict[str, str], 'pd.Series[str]'] = None,
     estimate_intraday: Union[bool, str] = 'infer',
     return_fig: bool = False
     ) -> Union[plt.Figure, None]:
@@ -999,8 +999,8 @@ def create_round_trip_tear_sheet(
 
 @plotting.customize
 def create_interesting_times_tear_sheet(
-    returns: pd.Series,
-    benchmark_rets: pd.Series = None,
+    returns: 'pd.Series[float]',
+    benchmark_rets: 'pd.Series[float]' = None,
     periods: dict[str, tuple[pd.Timestamp, pd.Timestamp]] = None,
     legend_loc: str = 'best',
     return_fig: bool = False
@@ -1093,7 +1093,7 @@ def create_interesting_times_tear_sheet(
 
 @plotting.customize
 def create_capacity_tear_sheet(
-    returns: pd.Series,
+    returns: 'pd.Series[float]',
     positions: pd.DataFrame,
     transactions: pd.DataFrame,
     market_data: pd.DataFrame,

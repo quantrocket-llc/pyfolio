@@ -12,13 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union, TextIO
+from typing import Union, TextIO, Any
 import pandas as pd
 import numpy as np
 from quantrocket.moonshot import read_moonshot_csv
 from moonchart.utils import intraday_to_daily
 from .tears import create_full_tear_sheet
 from .quantrocket_utils import pad_initial
+
+__all__ = [
+    "from_moonshot_csv",
+]
 
 def _get_benchmark_returns(benchmark_prices):
     """
@@ -39,7 +43,7 @@ def _get_benchmark_returns(benchmark_prices):
     benchmark_prices.name = "benchmark"
     return benchmark_prices.pct_change()
 
-def from_moonshot(results: pd.DataFrame, **kwargs) -> None:
+def from_moonshot(results: pd.DataFrame, **kwargs: Any) -> None:
     """
     Creates a full tear sheet from a moonshot backtest results DataFrame.
 
@@ -83,7 +87,7 @@ def from_moonshot(results: pd.DataFrame, **kwargs) -> None:
         **kwargs
     )
 
-def from_moonshot_csv(filepath_or_buffer: Union[str, TextIO], **kwargs) -> None:
+def from_moonshot_csv(filepath_or_buffer: Union[str, TextIO], **kwargs: Any) -> None:
     """
     Creates a full tear sheet from a moonshot backtest results CSV.
 
