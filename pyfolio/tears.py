@@ -1105,7 +1105,7 @@ def create_capacity_tear_sheet(
     return_fig: bool = False
     ) -> Union[plt.Figure, None]:
     """
-    Generates a report detailing portfolio size constraints set by
+    Generate a report detailing portfolio size constraints set by
     least liquid tickers. Plots a "capacity sweep," a curve describing
     projected sharpe ratio given the slippage penalties that are
     applied at various capital bases.

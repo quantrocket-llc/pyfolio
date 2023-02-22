@@ -89,7 +89,7 @@ def from_moonshot(results: pd.DataFrame, **kwargs: Any) -> None:
 
 def from_moonshot_csv(filepath_or_buffer: Union[str, TextIO], **kwargs: Any) -> None:
     """
-    Creates a full tear sheet from a moonshot backtest results CSV.
+    Create a full tear sheet from a moonshot backtest results CSV.
 
     Additional kwargs are passed to :class:`pyfolio.create_full_tear_sheet`.
 
