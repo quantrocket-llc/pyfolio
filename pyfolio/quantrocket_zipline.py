@@ -35,6 +35,12 @@ def from_zipline_csv(filepath_or_buffer: Union[str, TextIO], **kwargs: Any) -> N
     Returns
     -------
     None
+
+    Notes
+    -----
+    Usage Guide:
+
+    * Zipline backtesting: https://qrok.it/dl/pf/zipline-backtest
     """
     results = ZiplineBacktestResult.from_csv(filepath_or_buffer)
 

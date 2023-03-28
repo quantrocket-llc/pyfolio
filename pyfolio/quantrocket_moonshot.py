@@ -101,6 +101,12 @@ def from_moonshot_csv(filepath_or_buffer: Union[str, TextIO], **kwargs: Any) -> 
     Returns
     -------
     None
+
+    Notes
+    -----
+    Usage Guide:
+
+    * Moonshot backtesting: https://qrok.it/dl/pf/moonshot-backtest
     """
     results = read_moonshot_csv(filepath_or_buffer)
     return from_moonshot(results, **kwargs)
