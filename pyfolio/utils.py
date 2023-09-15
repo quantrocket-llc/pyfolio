@@ -143,7 +143,7 @@ def extract_rets_pos_txn_from_zipline(backtest):
         backtest.index = backtest.index.tz_localize('UTC')
     returns = backtest.returns
     raw_positions = []
-    for dt, pos_row in backtest.positions.iteritems():
+    for dt, pos_row in backtest.positions.items():
         df = pd.DataFrame(pos_row)
         df.index = [dt] * len(df)
         raw_positions.append(df)
@@ -344,7 +344,7 @@ def estimate_intraday(returns, positions, transactions, EOD_hour=23):
     # Calculate exposure, then take peak of exposure every day
     txn_val['exposure'] = txn_val.abs().sum(axis=1)
     condition = (txn_val['exposure'] == txn_val.groupby(
-        pd.Grouper(freq='24H'))['exposure'].transform(max))
+        pd.Grouper(freq='24H'))['exposure'].transform('max'))
     txn_val = txn_val[condition].drop('exposure', axis=1)
 
     # Compute cash delta
@@ -352,8 +352,8 @@ def estimate_intraday(returns, positions, transactions, EOD_hour=23):
 
     # Shift EOD positions to positions at start of next trading day
     positions_shifted = positions.copy().shift(1).fillna(0)
-    starting_capital = positions.iloc[0].sum() / (1 + returns[0])
-    positions_shifted.cash[0] = starting_capital
+    starting_capital = positions.iloc[0].sum() / (1 + returns.iloc[0])
+    positions_shifted.cash.iloc[0] = starting_capital
 
     # Format and add start positions to intraday position changes
     txn_val.index = txn_val.index.normalize()
@@ -413,68 +413,6 @@ def to_series(df):
     """
 
     return df[df.columns[0]]
-
-
-# This functions is simply a passthrough to empyrical, but is
-# required by the register_returns_func and get_symbol_rets.
-default_returns_func = empyrical.utils.default_returns_func
-
-# Settings dict to store functions/values that may
-# need to be overridden depending on the users environment
-SETTINGS = {
-    'returns_func': default_returns_func
-}
-
-
-def register_return_func(func):
-    """
-    Registers the 'returns_func' that will be called for
-    retrieving returns data.
-
-    Parameters
-    ----------
-    func : function
-        A function that returns a pandas Series of asset returns.
-        The signature of the function must be as follows
-
-        >>> func(symbol)
-
-        Where symbol is an asset identifier
-
-    Returns
-    -------
-    None
-    """
-
-    SETTINGS['returns_func'] = func
-
-
-def get_symbol_rets(symbol, start=None, end=None):
-    """
-    Calls the currently registered 'returns_func'
-
-    Parameters
-    ----------
-    symbol : object
-        An identifier for the asset whose return
-        series is desired.
-        e.g. ticker symbol or database ID
-    start : date, optional
-        Earliest date to fetch data for.
-        Defaults to earliest date available.
-    end : date, optional
-        Latest date to fetch data for.
-        Defaults to latest date available.
-
-    Returns
-    -------
-    pandas.Series
-        Returned by the current 'returns_func'
-    """
-
-    return SETTINGS['returns_func'](symbol,
-                                    start=start,
-                                    end=end)
 
 
 def configure_legend(ax, autofmt_xdate=True, change_colors=False,

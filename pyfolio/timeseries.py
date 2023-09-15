@@ -677,7 +677,7 @@ def summarize_paths(samples, cone_std=(1., 1.5, 2.), starting_value=1.):
     if isinstance(cone_std, (float, int)):
         cone_std = [cone_std]
 
-    cone_bounds = pd.DataFrame(columns=pd.Float64Index([]))
+    cone_bounds = pd.DataFrame(columns=pd.Index([], dtype='float64'))
     for num_std in cone_std:
         cone_bounds.loc[:, float(num_std)] = cum_mean + cum_std * num_std
         cone_bounds.loc[:, float(-num_std)] = cum_mean - cum_std * num_std

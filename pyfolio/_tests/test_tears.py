@@ -1,11 +1,15 @@
-from matplotlib.testing.decorators import cleanup
-
+import contextlib
+import warnings
+import inspect
+import functools
 from unittest import TestCase
 from parameterized import parameterized
 
 import os
 import gzip
 
+import matplotlib
+import matplotlib.pyplot as plt
 from pandas import read_csv
 
 from pyfolio.utils import (to_utc, to_series)
@@ -17,6 +21,58 @@ from pyfolio.tears import (create_full_tear_sheet,
                            create_round_trip_tear_sheet,
                            create_interesting_times_tear_sheet,)
 
+# The following code is copied from matplotlib, having been deprecated in mpl 3.6:
+# https://github.com/matplotlib/matplotlib/blob/v3.7.2/lib/matplotlib/testing/decorators.py#L24C1-L89C28
+@contextlib.contextmanager
+def _cleanup_cm():
+    orig_units_registry = matplotlib.units.registry.copy()
+    try:
+        with warnings.catch_warnings(), matplotlib.rc_context():
+            yield
+    finally:
+        matplotlib.units.registry.clear()
+        matplotlib.units.registry.update(orig_units_registry)
+        plt.close("all")
+
+def cleanup(style=None):
+    """
+    A decorator to ensure that any global state is reset before
+    running a test.
+
+    Parameters
+    ----------
+    style : str, dict, or list, optional
+        The style(s) to apply.  Defaults to ``["classic",
+        "_classic_test_patch"]``.
+    """
+
+    # If cleanup is used without arguments, *style* will be a callable, and we
+    # pass it directly to the wrapper generator.  If cleanup if called with an
+    # argument, it is a string naming a style, and the function will be passed
+    # as an argument to what we return.  This is a confusing, but somewhat
+    # standard, pattern for writing a decorator with optional arguments.
+
+    def make_cleanup(func):
+        if inspect.isgeneratorfunction(func):
+            @functools.wraps(func)
+            def wrapped_callable(*args, **kwargs):
+                with _cleanup_cm(), matplotlib.style.context(style):
+                    yield from func(*args, **kwargs)
+        else:
+            @functools.wraps(func)
+            def wrapped_callable(*args, **kwargs):
+                with _cleanup_cm(), matplotlib.style.context(style):
+                    func(*args, **kwargs)
+
+        return wrapped_callable
+
+    if callable(style):
+        result = make_cleanup(style)
+        # Default of mpl_test_settings fixture and image_comparison too.
+        style = ["classic", "_classic_test_patch"]
+        return result
+    else:
+        return make_cleanup
 
 class PositionsTestCase(TestCase):
     __location__ = os.path.realpath(

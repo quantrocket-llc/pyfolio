@@ -647,8 +647,11 @@ def show_perf_stats(returns, factor_returns=None, positions=None,
                                             APPROX_BDAYS_PER_MONTH)
         perf_stats = pd.DataFrame(perf_stats_all, columns=['Backtest'])
 
+    # cast to str so we can add a '%' suffix without pandas complaining
+    perf_stats = perf_stats.astype(str)
+
     for column in perf_stats.columns:
-        for stat, value in perf_stats[column].iteritems():
+        for stat, value in perf_stats[column].astype(float).items():
             if stat in STAT_FUNCS_PCT:
                 perf_stats.loc[stat, column] = str(np.round(value * 100,
                                                             3)) + '%'
@@ -823,7 +826,7 @@ def plot_rolling_returns(returns,
                 is_returns,
                 len(oos_cum_returns),
                 cone_std=cone_std,
-                starting_value=is_cum_returns[-1])
+                starting_value=is_cum_returns.iloc[-1])
 
             cone_bounds = cone_bounds.set_index(oos_cum_returns.index)
             for std in cone_std:

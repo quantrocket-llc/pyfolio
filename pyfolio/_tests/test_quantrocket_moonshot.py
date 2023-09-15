@@ -134,7 +134,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         _, args, kwargs = tear_sheet_call
         self.assertEqual(len(args), 1)
         returns = args[0]
-        self.assertEqual(returns.index.tz.zone, "UTC")
+        self.assertEqual(returns.index.tz.tzname(None), "UTC")
         # returns were padded to len 127 (more than 6 months=126 days)
         self.assertEqual(returns.index.size, 127)
         self.assertTrue((returns.iloc[:124] == 0).all())
@@ -197,7 +197,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         _, args, kwargs = tear_sheet_call
         self.assertEqual(len(args), 1)
         returns = args[0]
-        self.assertEqual(returns.index.tz.zone, "UTC")
+        self.assertEqual(returns.index.tz.tzname(None), "UTC")
         # returns were padded to len 127 (more than 6 months=126 days)
         self.assertEqual(returns.index.size, 127)
         self.assertTrue((returns.iloc[:124] == 0).all())
@@ -246,7 +246,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         _, args, kwargs = tear_sheet_call
         self.assertEqual(len(args), 1)
         returns = args[0]
-        self.assertEqual(returns.index.tz.zone, "UTC")
+        self.assertEqual(returns.index.tz.tzname(None), "UTC")
         # returns were padded to len 127 (more than 6 months=126 days)
         self.assertEqual(returns.index.size, 127)
         self.assertTrue((returns.iloc[:124] == 0).all())
@@ -276,7 +276,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
         _, args, kwargs = tear_sheet_call
         self.assertEqual(len(args), 1)
         returns = args[0]
-        self.assertEqual(returns.index.tz.zone, "UTC")
+        self.assertEqual(returns.index.tz.tzname(None), "UTC")
         # returns were padded to len 127 (more than 6 months=126 days)
         self.assertEqual(returns.index.size, 127)
         self.assertTrue((returns.iloc[:125] == 0).all())

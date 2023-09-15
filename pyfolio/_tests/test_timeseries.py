@@ -298,7 +298,7 @@ class TestCone(TestCase):
         midline = np.cumprod(1 + (rets.mean() * np.ones(days_forward)))
         stdev = rets.std() * midline * np.sqrt(np.arange(days_forward)+1)
 
-        normal_cone = pd.DataFrame(columns=pd.Float64Index([]))
+        normal_cone = pd.DataFrame(columns=pd.Index([], dtype='float64'))
         for s in cone_stdevs:
             normal_cone[s] = midline + s * stdev
             normal_cone[-s] = midline - s * stdev
@@ -307,7 +307,7 @@ class TestCone(TestCase):
             rets, days_forward, cone_stdevs, starting_value=1,
             random_seed=random_seed, num_samples=10000)
 
-        for col, vals in bootstrap_cone.iteritems():
+        for col, vals in bootstrap_cone.items():
             expected = normal_cone[col].values
             assert_allclose(vals.values, expected, rtol=.005)
 
