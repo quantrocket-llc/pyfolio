@@ -255,21 +255,26 @@ def perf_stats(returns, factor_returns=None, positions=None,
     pd.Series
         Performance metrics.
     """
+    def nan_round(x):
+        if np.isnan(x):
+            return np.nan
+        else:
+            return round(x, 4)
 
     stats = pd.Series()
     for stat_func in SIMPLE_STAT_FUNCS:
-        stats[STAT_FUNC_NAMES[stat_func.__name__]] = stat_func(returns)
+        stats[STAT_FUNC_NAMES[stat_func.__name__]] = nan_round(stat_func(returns))
 
     if positions is not None:
-        stats['Gross leverage'] = gross_lev(positions).mean()
+        stats['Gross leverage'] = nan_round(gross_lev(positions).mean())
         if transactions is not None:
-            stats['Daily turnover'] = get_turnover(positions,
-                                                   transactions,
-                                                   turnover_denom).mean()
+            stats['Daily turnover'] = nan_round(get_turnover(positions,
+                                                transactions,
+                                                turnover_denom).mean())
     if factor_returns is not None:
         for stat_func in FACTOR_STAT_FUNCS:
             res = stat_func(returns, factor_returns)
-            stats[STAT_FUNC_NAMES[stat_func.__name__]] = res
+            stats[STAT_FUNC_NAMES[stat_func.__name__]] = nan_round(res)
 
     return stats
 

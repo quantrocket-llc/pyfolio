@@ -1044,7 +1044,7 @@ def create_interesting_times_tear_sheet(
         returns, periods)
 
     if not rets_interesting:
-        warnings.warn('Passed returns do not overlap with any'
+        warnings.warn('Passed returns do not overlap with any '
                       'interesting times.', UserWarning)
         return
 
