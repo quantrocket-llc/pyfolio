@@ -24,12 +24,12 @@ __all__ = [
     "from_moonshot_csv",
 ]
 
-def _get_benchmark_returns(benchmark_prices):
+def _get_benchmark_returns(benchmark):
     """
-    Returns a Series of benchmark prices, if any. If more than one column has
-    benchmark prices, uses the first.
+    Returns a Series of benchmark returns, if any. If more than one column has
+    benchmark returns, uses the first.
     """
-    have_benchmarks = benchmark_prices.notnull().any(axis=0)
+    have_benchmarks = (benchmark.fillna(0) != 0).any(axis=0)
     have_benchmarks = have_benchmarks[have_benchmarks]
     if have_benchmarks.empty:
         return None
@@ -39,9 +39,9 @@ def _get_benchmark_returns(benchmark_prices):
         import warnings
         warnings.warn("Multiple benchmarks found, only using first ({0})".format(col))
 
-    benchmark_prices = benchmark_prices[col]
-    benchmark_prices.name = "benchmark"
-    return benchmark_prices.pct_change()
+    benchmark_returns = benchmark[col]
+    benchmark_returns.name = "benchmark"
+    return benchmark_returns
 
 def from_moonshot(results: pd.DataFrame, **kwargs: Any) -> None:
     """
