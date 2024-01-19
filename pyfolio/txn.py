@@ -33,7 +33,7 @@ def map_transaction(txn):
     """
 
     if isinstance(txn['sid'], dict):
-        sid = txn['sid']['sid']
+        sid = txn['sid']['real_sid']
         symbol = txn['sid']['symbol']
     else:
         sid = txn['sid']
