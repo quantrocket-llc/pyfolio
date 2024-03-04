@@ -44,6 +44,7 @@ def map_transaction(txn):
             'price': txn['price'],
             'order_id': txn['order_id'],
             'amount': txn['amount'],
+            'resulting_amount': txn['resulting_amount'],
             'commission': txn['commission'],
             'dt': txn['dt']}
 
