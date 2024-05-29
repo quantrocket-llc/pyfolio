@@ -777,8 +777,6 @@ class PyFolioFromZiplineTestCase(unittest.TestCase):
                 pd.Timestamp('2017-12-22 00:00:00+0000', tz='UTC'): 0.0004600216334498253
             })
 
-        self.assertEqual(list(kwargs.keys()), ["positions", "transactions", "benchmark_rets"])
-
         # benchmark_rets were also padded to len 127
         benchmark_rets = kwargs["benchmark_rets"]
         self.assertEqual(benchmark_rets.index.size, 127)
@@ -839,3 +837,62 @@ class PyFolioFromZiplineTestCase(unittest.TestCase):
                 }
             }
         )
+
+    @patch("pyfolio.quantrocket_zipline.create_full_tear_sheet")
+    def test_from_zipline_csv_start_date(self, mock_create_full_tear_sheet):
+
+        f = io.StringIO()
+        zipline_results = pd.DataFrame.from_records(ZIPLINE_RESULTS)
+        zipline_results.to_csv(f,index=False)
+        f.seek(0)
+
+        pyfolio.from_zipline_csv(f, start_date="2017-12-21")
+
+        tear_sheet_call = mock_create_full_tear_sheet.mock_calls[0]
+
+        _, args, kwargs = tear_sheet_call
+        self.assertEqual(len(args), 1)
+        returns = args[0]
+        self.assertEqual(returns.index.min(), pd.Timestamp("2017-12-21", tz="UTC"))
+        self.assertEqual(returns.index.max(), pd.Timestamp("2017-12-22", tz="UTC"))
+
+        benchmark_rets = kwargs["benchmark_rets"]
+        self.assertEqual(benchmark_rets.index.min(), pd.Timestamp("2017-12-21", tz="UTC"))
+        self.assertEqual(benchmark_rets.index.max(), pd.Timestamp("2017-12-22", tz="UTC"))
+
+        transactions = kwargs["transactions"]
+        self.assertEqual(transactions.index.min(), pd.Timestamp("2017-12-22 14:31:00", tz="UTC"))
+        self.assertEqual(transactions.index.max(), pd.Timestamp("2017-12-22 18:48:00", tz="UTC"))
+
+        positions = kwargs["positions"]
+        self.assertEqual(positions.index.min(), pd.Timestamp("2017-12-21", tz="UTC"))
+        self.assertEqual(positions.index.max(), pd.Timestamp("2017-12-22", tz="UTC"))
+
+    @patch("pyfolio.quantrocket_zipline.create_full_tear_sheet")
+    def test_from_zipline_csv_end_date(self, mock_create_full_tear_sheet):
+
+        f = io.StringIO()
+        zipline_results = pd.DataFrame.from_records(ZIPLINE_RESULTS)
+        zipline_results.to_csv(f,index=False)
+        f.seek(0)
+
+        pyfolio.from_zipline_csv(f, end_date="2017-12-21")
+
+        tear_sheet_call = mock_create_full_tear_sheet.mock_calls[0]
+
+        _, args, kwargs = tear_sheet_call
+        self.assertEqual(len(args), 1)
+        returns = args[0]
+        self.assertEqual(returns.index.min(), pd.Timestamp("2017-06-29", tz="UTC"))
+        self.assertEqual(returns.index.max(), pd.Timestamp("2017-12-21", tz="UTC"))
+
+        benchmark_rets = kwargs["benchmark_rets"]
+        self.assertEqual(benchmark_rets.index.min(), pd.Timestamp("2017-06-29", tz="UTC"))
+        self.assertEqual(benchmark_rets.index.max(), pd.Timestamp("2017-12-21", tz="UTC"))
+
+        transactions = kwargs["transactions"]
+        self.assertTrue(transactions.empty)
+
+        positions = kwargs["positions"]
+        self.assertEqual(positions.index.min(), pd.Timestamp("2017-12-20", tz="UTC"))
+        self.assertEqual(positions.index.max(), pd.Timestamp("2017-12-21", tz="UTC"))

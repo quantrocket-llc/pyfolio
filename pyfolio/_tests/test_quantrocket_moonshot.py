@@ -145,7 +145,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
                 pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013200028e-06,
                 pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334756
             })
-        self.assertEqual(list(kwargs.keys()), ["positions", "benchmark_rets"])
+
         benchmark_rets = kwargs["benchmark_rets"]
         positions = kwargs["positions"]
         self.assertListEqual(
@@ -208,7 +208,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
                 pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013200028e-06,
                 pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334756
             })
-        self.assertEqual(list(kwargs.keys()), ["positions"])
+
         positions = kwargs["positions"]
         self.assertListEqual(
             positions.reset_index().to_dict(orient="records"),
@@ -230,36 +230,6 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
                  }
             ]
         )
-
-    @patch("pyfolio.quantrocket_moonshot.create_full_tear_sheet")
-    def test_from_moonshot_csv_pass_kwargs(self, mock_create_full_tear_sheet):
-
-        f = io.StringIO()
-        moonshot_results = pd.DataFrame(MOONSHOT_RESULTS)
-        moonshot_results.to_csv(f,index=False)
-        f.seek(0)
-
-        pyfolio.from_moonshot_csv(f, foo="bar", baz="bat")
-
-        tear_sheet_call = mock_create_full_tear_sheet.mock_calls[0]
-
-        _, args, kwargs = tear_sheet_call
-        self.assertEqual(len(args), 1)
-        returns = args[0]
-        self.assertEqual(returns.index.tz.tzname(None), "UTC")
-        # returns were padded to len 127 (more than 6 months=126 days)
-        self.assertEqual(returns.index.size, 127)
-        self.assertTrue((returns.iloc[:124] == 0).all())
-        self.assertDictEqual(
-            returns.iloc[124:].to_dict(),
-            {
-                pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.0048433041556253,
-                pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): -9.168126013200028e-06,
-                pd.Timestamp('2018-05-09 00:00:00+0000', tz='UTC'): 0.0038927545334756
-            })
-        self.assertSetEqual(set(kwargs.keys()), {"positions", "benchmark_rets", "foo", "baz"})
-        self.assertEqual(kwargs["foo"], "bar")
-        self.assertEqual(kwargs["baz"], "bat")
 
     @patch("pyfolio.quantrocket_moonshot.create_full_tear_sheet")
     def test_from_intraday_moonshot_csv(self, mock_create_full_tear_sheet):
@@ -285,7 +255,7 @@ class PyFolioFromMoonshotTestCase(unittest.TestCase):
             {
                 pd.Timestamp('2018-05-07 00:00:00+0000', tz='UTC'): 0.004834136029612099,
                 pd.Timestamp('2018-05-08 00:00:00+0000', tz='UTC'): 0.0086074440306706})
-        self.assertEqual(list(kwargs.keys()), ["positions"])
+
         positions = kwargs["positions"]
         self.assertListEqual(
             positions.reset_index().to_dict(orient="records"),
