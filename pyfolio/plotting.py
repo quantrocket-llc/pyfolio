@@ -723,7 +723,9 @@ def plot_rolling_returns(returns,
                          legend_loc='best',
                          volatility_match=False,
                          cone_function=timeseries.forecast_cone_bootstrap,
-                         ax=None, **kwargs):
+                         ax=None,
+                         arithmetic=False,
+                         **kwargs):
     """
     Plots cumulative rolling returns versus some benchmarks'.
 
@@ -767,6 +769,9 @@ def plot_rolling_returns(returns,
         See timeseries.forecast_cone_bootstrap for an example.
     ax : matplotlib.Axes, optional
         Axes upon which to plot.
+    arithmetic : bool, optional
+        Whether to use arithmetic (rather than geometric) returns. Default
+        is geometric.
     **kwargs, optional
         Passed to plotting function.
 
@@ -790,14 +795,21 @@ def plot_rolling_returns(returns,
         bmark_vol = factor_returns.loc[returns.index].std()
         returns = (returns / returns.std()) * bmark_vol
 
-    cum_rets = ep.cum_returns(returns, 1.0)
+    if arithmetic:
+        cum_rets = returns.cumsum()
+    else:
+        cum_rets = ep.cum_returns(returns, 1.0)
 
     y_axis_formatter = FuncFormatter(utils.two_dec_places)
     ax.yaxis.set_major_formatter(FuncFormatter(y_axis_formatter))
 
     if factor_returns is not None:
-        cum_factor_returns = ep.cum_returns(
-            factor_returns.loc[factor_returns.index.intersection(cum_rets.index)], 1.0)
+        if arithmetic:
+            cum_factor_returns = factor_returns.loc[
+                factor_returns.index.intersection(cum_rets.index)].cumsum()
+        else:
+            cum_factor_returns = ep.cum_returns(
+                factor_returns.loc[factor_returns.index.intersection(cum_rets.index)], 1.0)
         cum_factor_returns.plot(lw=2, color='gray',
                                 label=factor_returns.name, alpha=0.60,
                                 ax=ax, **kwargs)

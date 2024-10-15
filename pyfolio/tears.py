@@ -21,6 +21,7 @@ from typing import Union
 import empyrical as ep
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 import pandas as pd
 
 from . import _seaborn as sns
@@ -69,7 +70,10 @@ def create_full_tear_sheet(
     unadjusted_returns: 'pd.Series[float]' = None,
     turnover_denom: str = 'AGB',
     set_context: bool = True,
-    header_rows: dict[str, str] = None
+    header_rows: dict[str, str] = None,
+    pnl: 'pd.Series[float]' = None,
+    commissions: 'pd.Series[float]' = None,
+    fees: 'pd.Series[float]' = None,
     ) -> None:
     """
     Generate a number of tear sheets that are useful
@@ -180,6 +184,19 @@ def create_full_tear_sheet(
         If True, set default plotting style context.
 
         - See plotting.context().
+
+    pnl : pd.Series, optional
+        Daily noncumulative pnl.
+
+    commissions : pd.Series, optional
+        Daily noncumulative commissions.
+
+    fees : pd.Series, optional
+        Daily noncumulative fees.
+
+    Returns
+    -------
+    None
     """
 
     if (unadjusted_returns is None) and (slippage is not None) and\
@@ -201,7 +218,11 @@ def create_full_tear_sheet(
         bootstrap=bootstrap,
         turnover_denom=turnover_denom,
         header_rows=header_rows,
-        set_context=set_context)
+        set_context=set_context,
+        pnl=pnl,
+        commissions=commissions,
+        fees=fees
+        )
 
     create_interesting_times_tear_sheet(returns,
                                         benchmark_rets=benchmark_rets,
@@ -453,7 +474,10 @@ def create_returns_tear_sheet(
     bootstrap: bool = False,
     turnover_denom: str = 'AGB',
     header_rows: dict[str, str] = None,
-    return_fig: bool = False
+    return_fig: bool = False,
+    pnl: 'pd.Series[float]' = None,
+    commissions: 'pd.Series[float]' = None,
+    fees: 'pd.Series[float]' = None
     ) -> Union[plt.Figure, None]:
     """
     Generate a number of plots for analyzing a strategy's returns.
@@ -513,6 +537,18 @@ def create_returns_tear_sheet(
 
     return_fig : boolean, optional
         If True, returns the figure that was plotted on.
+
+    pnl : pd.Series, optional
+        Daily PNL of the strategy. Will only be plotted if commissions
+        or fees are also provided.
+
+    commissions : pd.Series, optional
+        Daily commissions of the strategy. Will only be plotted if pnl
+        is also provided.
+
+    fees : pd.Series, optional
+        Daily fees of the strategy. Will only be plotted if pnl
+        is also provided.
     """
 
     if benchmark_rets is not None:
@@ -540,6 +576,12 @@ def create_returns_tear_sheet(
     if bootstrap:
         vertical_sections += 1
 
+    if pnl is not None and commissions is not None:
+        vertical_sections += 1
+
+    if pnl is not None and fees is not None:
+        vertical_sections += 1
+
     fig = plt.figure(figsize=(14, vertical_sections * 6))
     gs = gridspec.GridSpec(vertical_sections, 3, wspace=0.5, hspace=0.5)
     ax_rolling_returns = plt.subplot(gs[:2, :])
@@ -553,6 +595,15 @@ def create_returns_tear_sheet(
     ax_rolling_returns_log = plt.subplot(gs[i, :],
                                          sharex=ax_rolling_returns)
     i += 1
+
+    if pnl is not None and commissions is not None:
+        ax_pnl_commissions = plt.subplot(gs[i, :], sharex=ax_rolling_returns)
+        i += 1
+
+    if pnl is not None and fees is not None:
+        ax_pnl_fees = plt.subplot(gs[i, :], sharex=ax_rolling_returns)
+        i += 1
+
     ax_returns = plt.subplot(gs[i, :],
                              sharex=ax_rolling_returns)
     i += 1
@@ -604,6 +655,34 @@ def create_returns_tear_sheet(
         ax=ax_rolling_returns_log)
     ax_rolling_returns_log.set_title(
         'Cumulative returns on logarithmic scale')
+
+    if pnl is not None and commissions is not None:
+        plotting.plot_rolling_returns(
+            pnl,
+            factor_returns=commissions,
+            live_start_date=live_start_date,
+            cone_std=cone_std,
+            ax=ax_pnl_commissions,
+            arithmetic=True)
+        ax_pnl_commissions.set_title(
+            'Cumulative PNL vs commissions')
+        ax_pnl_commissions.set_ylabel('Cumulative PNL')
+        y_axis_formatter = FuncFormatter(utils.pnl_format_fn)
+        ax_pnl_commissions.yaxis.set_major_formatter(FuncFormatter(y_axis_formatter))
+
+    if pnl is not None and fees is not None:
+        plotting.plot_rolling_returns(
+            pnl,
+            factor_returns=fees,
+            live_start_date=live_start_date,
+            cone_std=cone_std,
+            ax=ax_pnl_fees,
+            arithmetic=True)
+        ax_pnl_fees.set_title(
+            'Cumulative PNL vs fees')
+        ax_pnl_fees.set_ylabel('Cumulative PNL')
+        y_axis_formatter = FuncFormatter(utils.pnl_format_fn)
+        ax_pnl_fees.yaxis.set_major_formatter(FuncFormatter(y_axis_formatter))
 
     plotting.plot_returns(
         returns,

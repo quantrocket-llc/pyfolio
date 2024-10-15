@@ -131,12 +131,28 @@ def from_zipline_csv(
         benchmark_rets.name = "benchmark"
         benchmark_rets = pad_initial(benchmark_rets)
 
+    commissions = None
+    fees = None
+    pnl = None
+    if "commissions" in results.perf.columns and results.perf.commissions.sum() > 0:
+        commissions = results.perf.commissions
+    if "fees" in results.perf.columns and results.perf.fees.sum() > 0:
+        fees = results.perf.fees
+    if fees is not None or commissions is not None:
+        pnl = results.perf.pnl
+
     if start_date:
         returns = returns.loc[start_date:]
         positions = positions.loc[start_date:]
         transactions = transactions.loc[start_date:]
         if benchmark_rets is not None:
             benchmark_rets = benchmark_rets.loc[start_date:]
+        if commissions is not None:
+            commissions = commissions.loc[start_date:]
+        if fees is not None:
+            fees = fees.loc[start_date:]
+        if pnl is not None:
+            pnl = pnl.loc[start_date:]
 
     if end_date:
         returns = returns.loc[:end_date]
@@ -144,6 +160,12 @@ def from_zipline_csv(
         transactions = transactions.loc[:end_date]
         if benchmark_rets is not None:
             benchmark_rets = benchmark_rets.loc[:end_date]
+        if commissions is not None:
+            commissions = commissions.loc[:end_date]
+        if fees is not None:
+            fees = fees.loc[:end_date]
+        if pnl is not None:
+            pnl = pnl.loc[:end_date]
 
     return create_full_tear_sheet(
         returns,
@@ -161,5 +183,8 @@ def from_zipline_csv(
         unadjusted_returns=unadjusted_returns,
         turnover_denom=turnover_denom,
         set_context=set_context,
-        header_rows=header_rows
+        header_rows=header_rows,
+        pnl=pnl,
+        commissions=commissions,
+        fees=fees
         )

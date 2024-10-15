@@ -54,6 +54,21 @@ COLORS = ['#e6194b', '#3cb44b', '#ffe119', '#0082c8', '#f58231',
           '#808000', '#ffd8b1', '#000080', '#808080']
 
 
+def pnl_format_fn(value, pos):
+    """
+    Formats numbers as follows:
+
+    1,200,000 -> 1.2M
+    1,200 -> 1.2K
+    500 -> 500
+    """
+    if abs(value) >= 1_000_000:
+        return f'{value/1_000_000:.1f}M'
+    elif abs(value) >= 1_000:
+        return f'{value/1_000:.1f}K'
+    else:
+        return f'{value:.0f}'
+
 def one_dec_places(x, pos):
     """
     Adds 1/10th decimal to plot ticks.
