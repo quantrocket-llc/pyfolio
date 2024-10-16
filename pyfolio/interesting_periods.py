@@ -70,6 +70,9 @@ PERIODS['2018 Bear Market'] = (pd.Timestamp('20180901'), pd.Timestamp('20190131'
 # Covid-19 crash and recovery
 PERIODS['COVID-19'] = (pd.Timestamp('20200201'), pd.Timestamp('20200930'))
 
+# 2022 inflation and rate tightening
+PERIODS['2022 Inflation'] = (pd.Timestamp('20220103'), pd.Timestamp('20230428'))
+
 # Market regimes
 PERIODS['Low Volatility Bull Market'] = (pd.Timestamp('20050101'),
                                          pd.Timestamp('20070801'))
