@@ -166,6 +166,9 @@ def extract_rets_pos_txn_from_zipline(backtest):
         raise ValueError("The backtest does not have any positions.")
     positions = pd.concat(raw_positions)
     positions = pos.extract_pos(positions, backtest.ending_cash)
+    # Reindex positions to fill in any missing days, so that days with
+    # no positions are included in the positions DataFrame
+    positions = positions.reindex(backtest.index).fillna(0)
     transactions = txn.make_transaction_frame(backtest.transactions)
     if transactions.index.tzinfo is None:
         transactions.index = transactions.index.tz_localize('utc')
