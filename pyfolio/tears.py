@@ -660,7 +660,8 @@ def create_returns_tear_sheet(
         plotting.plot_rolling_returns(
             pnl,
             factor_returns=commissions,
-            live_start_date=live_start_date,
+            # Don't show the cone plot on PNL graphs, it screws up the scale
+            live_start_date=None,
             cone_std=cone_std,
             ax=ax_pnl_commissions,
             arithmetic=True)
@@ -674,7 +675,8 @@ def create_returns_tear_sheet(
         plotting.plot_rolling_returns(
             pnl,
             factor_returns=fees,
-            live_start_date=live_start_date,
+            # Don't show the cone plot on PNL graphs, it screws up the scale
+            live_start_date=None,
             cone_std=cone_std,
             ax=ax_pnl_fees,
             arithmetic=True)
