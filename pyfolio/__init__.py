@@ -66,3 +66,6 @@ __all__ = [
     'from_zipline_csv',
     'from_moonshot_csv'
     ]
+
+from . import _version
+__version__ = _version.get_versions()['version']
