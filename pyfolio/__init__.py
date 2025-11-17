@@ -48,12 +48,10 @@ from . import round_trips
 
 from .tears import *  # noqa
 from .plotting import *  # noqa
-from ._version import get_versions
 from .quantrocket_moonshot import * # noqa
 from .quantrocket_zipline import from_zipline_csv # noqa
 
-__version__ = get_versions()['version']
-del get_versions
+from ._version import version as __version__
 
 __all__ = [
     'utils',
@@ -66,6 +64,3 @@ __all__ = [
     'from_zipline_csv',
     'from_moonshot_csv'
     ]
-
-from . import _version
-__version__ = _version.get_versions()['version']
