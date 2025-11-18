@@ -315,7 +315,7 @@ def plot_holdings(returns, positions, legend_loc='best', ax=None, **kwargs):
 
     positions = positions.copy().drop('cash', axis='columns')
     df_holdings = positions.replace(0, np.nan).count(axis=1)
-    df_holdings_by_month = df_holdings.resample('1M').mean()
+    df_holdings_by_month = df_holdings.resample('1ME').mean()
     df_holdings.plot(color='steelblue', alpha=0.6, lw=0.5, ax=ax, **kwargs)
     df_holdings_by_month.plot(
         color='orangered',
@@ -1319,7 +1319,7 @@ def plot_return_quantiles(returns, live_start_date=None, ax=None, **kwargs):
         else returns.loc[returns.index < live_start_date]
     is_weekly = ep.aggregate_returns(is_returns, 'weekly')
     is_monthly = ep.aggregate_returns(is_returns, 'monthly')
-    sns.boxplot(data=[is_returns, is_weekly, is_monthly],
+    sns.boxplot(data=[is_returns.values, is_weekly.values, is_monthly.values],
                 palette=["#4c72B0", "#55A868", "#CCB974"],
                 ax=ax, **kwargs)
 
@@ -1386,7 +1386,7 @@ def plot_turnover(returns, transactions, positions, turnover_denom='AGB',
     ax.yaxis.set_major_formatter(FuncFormatter(y_axis_formatter))
 
     df_turnover = txn.get_turnover(positions, transactions, turnover_denom)
-    df_turnover_by_month = df_turnover.resample("M").mean()
+    df_turnover_by_month = df_turnover.resample("ME").mean()
     df_turnover.plot(color='steelblue', alpha=1.0, lw=0.5, ax=ax, **kwargs)
     df_turnover_by_month.plot(
         color='orangered',
@@ -1720,7 +1720,7 @@ def plot_monthly_returns_timeseries(returns, ax=None, **kwargs):
     if ax is None:
         ax = plt.gca()
 
-    monthly_rets = returns.resample('M').apply(lambda x: cumulate_returns(x))
+    monthly_rets = returns.resample('ME').apply(lambda x: cumulate_returns(x))
     monthly_rets = monthly_rets.to_period()
 
     sns.barplot(x=monthly_rets.index,

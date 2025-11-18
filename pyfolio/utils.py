@@ -362,7 +362,7 @@ def estimate_intraday(returns, positions, transactions, EOD_hour=23):
     # Calculate exposure, then take peak of exposure every day
     txn_val['exposure'] = txn_val.abs().sum(axis=1)
     condition = (txn_val['exposure'] == txn_val.groupby(
-        pd.Grouper(freq='24H'))['exposure'].transform('max'))
+        pd.Grouper(freq='24h'))['exposure'].transform('max'))
     txn_val = txn_val[condition].drop('exposure', axis=1)
 
     # Compute cash delta
@@ -371,7 +371,7 @@ def estimate_intraday(returns, positions, transactions, EOD_hour=23):
     # Shift EOD positions to positions at start of next trading day
     positions_shifted = positions.copy().shift(1).fillna(0)
     starting_capital = positions.iloc[0].sum() / (1 + returns.iloc[0])
-    positions_shifted.cash.iloc[0] = starting_capital
+    positions_shifted.loc[positions_shifted.index[0], "cash"] = starting_capital
 
     # Format and add start positions to intraday position changes
     txn_val.index = txn_val.index.normalize()

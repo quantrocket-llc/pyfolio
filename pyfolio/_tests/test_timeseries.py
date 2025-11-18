@@ -248,7 +248,7 @@ class TestStats(TestCase):
         pd.date_range(
             '2000-1-31',
             periods=500,
-            freq='M'))
+            freq='ME'))
 
     simple_benchmark = pd.Series(
         [0.03] * 4 + [0] * 496,
