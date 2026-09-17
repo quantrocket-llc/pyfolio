@@ -1335,7 +1335,7 @@ def plot_return_quantiles(returns, live_start_date=None, ax=None, **kwargs):
                                            label="Out-of-sample data",
                                            linestyle='')
         ax.legend(handles=[red_dots], frameon=True, framealpha=0.5)
-    ax.set_xticklabels(['Daily', 'Weekly', 'Monthly'])
+    ax.set_xticks([0, 1, 2], labels=['Daily', 'Weekly', 'Monthly'])
     ax.set_title('Return quantiles')
 
     return ax
